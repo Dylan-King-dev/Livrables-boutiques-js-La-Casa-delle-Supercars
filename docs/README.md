@@ -1,7 +1,7 @@
 # 🏎️ La Casa delle Supercars — Boutique E-Commerce
 
 > Projet réalisé dans le cadre du module **Challenge JS** — Ynov Campus Sophia
-> Groupe de 2 : **[Prénom Nom Étudiant 1]** & **[Prénom Nom Étudiant 2]**
+> Groupe de 2 : **Dylan KING** & **Florian Azria**
 
 ---
 
@@ -286,17 +286,17 @@ Voici les variables nécessaires :
 
 | Tâche | Responsable |
 |-------|-------------|
-| Structure HTML / CSS global + responsive | [Prénom Nom Étudiant 1] |
-| Page catalogue (affichage, filtres, tri, recherche) | [Prénom Nom Étudiant 1] |
-| Page fiche produit + carrousel | [Prénom Nom Étudiant 2] |
-| Backend Express + routes API | [Prénom Nom Étudiant 2] |
-| Base de données MySQL + schéma | [Prénom Nom Étudiant 1] |
-| Panier (frontend + backend) | [Prénom Nom Étudiant 2] |
-| Favoris + Livraison | [Prénom Nom Étudiant 1] |
-| Gestion des stocks et promotions | [Prénom Nom Étudiant 2] |
-| Bonus : Recherche + Paiement | [Prénom Nom Étudiant 1] & [Prénom Nom Étudiant 2] |
-| README + Documentation | [Prénom Nom Étudiant 1] & [Prénom Nom Étudiant 2] |
-| Slides de présentation | [Prénom Nom Étudiant 1] & [Prénom Nom Étudiant 2] |
+| Structure HTML / CSS global + responsive | A completer |
+| Page catalogue (affichage, filtres, tri, recherche) | A completer |
+| Page fiche produit + carrousel | A completer |
+| Backend Express + routes API | A completer |
+| Base de données MySQL + schéma | A completer |
+| Panier (frontend + backend) | A completer |
+| Favoris + Livraison | A completer |
+| Gestion des stocks et promotions | A completer |
+| Bonus : Recherche + Paiement | A completer |
+| README + Documentation | A completer |
+| Slides de présentation | A completer |
 
 ### Outils de communication et gestion de projet
 
