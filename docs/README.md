@@ -286,7 +286,7 @@ Voici les variables nécessaires :
 
 | Tâche | Responsable |
 |-------|-------------|
-| Structure HTML / CSS global + responsive | A completer |
+| Structure HTML / CSS global + responsive | King Dylan |
 | Page catalogue (affichage, filtres, tri, recherche) | A completer |
 | Page fiche produit + carrousel | A completer |
 | Backend Express + routes API | A completer |
