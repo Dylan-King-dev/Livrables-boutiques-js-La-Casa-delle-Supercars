@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <script src="../assets/js/main.js" defer></script>
+    <title>Accueil</title>  
+</head>
+<body>
+
+    <header class="header">  
+        <div class="logo">
+            <a href="index.html"><img src="../assets/img/logos/La Casa delle Supercars logo.png" alt="LA CASA"></a>
+        </div>
+        <nav class="nav"> 
+            <a href="catalogue.html">Catalogue</a>
+            <a href="catalogue.html?marque=maserati"><img class="nav-logo-writing" src="../assets/img/maserati/maserati logo writing.png" alt="Maserati"></a>
+            <a href="catalogue.html?marque=porsche"><img class="nav-logo-writing" src="../assets/img/porsche/porsche logo writing.png" alt="Porsche"></a>
+        </nav>
+        <div class="header-actions">
+            <div class="searchBar">
+                <input type="text" placeholder="Rechercher un modèle..." id="searchInput">
+                <button aria-label="Rechercher">🔍</button> 
+            </div>
+            <a href="favoris.html" aria-label="Favoris">🤍</a>
+            <a href="panier.html" aria-label="Panier">🛒</a>
+        </div>
+    </header>
+
+    <main> 
+        <div class="hero">
+            <div class="hero-left">
+                <img src="../assets/img/maserati/Maserati-logo.png" alt="Maserati">
+                <div class="hero-content">
+                    <h2>MASERATI</h2>
+                    <p>Excellence italienne</p>
+                    <a href="catalogue.html?marque=maserati" class="btn-cta">Découvrir</a>
+                </div>
+            </div>
+            <div class="hero-right">
+                <img src="../assets/img/porsche/porsche-logo.png" alt="Porsche">
+                <div class="hero-content">
+                    <h2>PORSCHE</h2>
+                    <p>Performance allemande</p>
+                    <a href="catalogue.html?marque=porsche" class="btn-cta">Découvrir</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/main.js"></script>
+</body>
+</html>

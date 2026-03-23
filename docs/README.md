@@ -216,6 +216,8 @@ Ouvrir `frontend/pages/index.html` dans votre navigateur, ou utiliser l'extensio
 
 Le fichier `docs/schema.sql` contient le script complet de création des tables. Voici la structure principale :
 
+
+(A modifier mais ici un exemple de structure possible)
 ```sql
 -- Catégories (Maserati, Porsche)
 CREATE TABLE categories (
@@ -404,7 +406,7 @@ style: responsive mobile page catalogue
 docs: mise a jour README installation
 ```
 
-### Workflow recommandé
+### Workflow utilisé
 
 ```bash
 # Créer une nouvelle branche pour chaque fonctionnalité
@@ -421,16 +423,5 @@ git push origin feat/catalogue-filtres
 git checkout dev
 git merge feat/catalogue-filtres
 ```
-
----
-
-## ⚠️ Points importants
-
-- Le fichier `.env` ne doit **jamais** apparaître sur GitHub (malus de -2 points)
-- Le projet doit être rendu **avant le lundi 13 avril à 8h45** (malus de -2 points en cas de retard)
-- Le frontend doit fonctionner **sans framework** (HTML/CSS/JS uniquement)
-- Le site doit être **responsive** sur desktop, tablette et smartphone
-
----
 
 *Projet réalisé à Ynov Campus Sophia — Module Challenge JS*
