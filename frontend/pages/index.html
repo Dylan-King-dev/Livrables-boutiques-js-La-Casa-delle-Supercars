@@ -4,38 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/css/main.css">
-    <script src="../assets/js/main.js" defer></script>
+    <script src="../js/main.js" defer></script>
     <title>Accueil</title>  
 </head>
 <body>
 
     <header class="header">  
+        <button class ="hamburger" id="menuBtn" aria-label="Open menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
         <div class="logo">
-            <a href="index.html"><img src="../assets/img/logos/La Casa delle Supercars logo.png" alt="LA CASA"></a>
+            <a href="index.html"><img src="../assets/img/logos/Red car house emblem logo.png" alt="LA CASA"></a>
         </div>
     </header>
 
     <main> 
         <div class="hero">
             <div class="hero-left">
-                <img src="../assets/img/maserati/Maserati_Accueil.png" alt="Maserati">
+                <img src="../assets/img/maserati/Maserati-index.png" alt="Maserati">
                 <div class="hero-content">
-                    <h2>MASERATI</h2>
-                    <p>Excellence italienne</p>
                     <a href="catalogue.html?marque=maserati" class="btn-cta">Découvrir</a>
                 </div>
             </div>
             <div class="hero-right">
-                <img src="../assets/img/porsche/porsche-logo.png" alt="Porsche">
+                <img src="../assets/img/porsche/Porsche-index.png" alt="Porsche">
                 <div class="hero-content">
-                    <h2>PORSCHE</h2>
-                    <p>Performance allemande</p>
                     <a href="catalogue.html?marque=porsche" class="btn-cta">Découvrir</a>
                 </div>
             </div>
         </div>
     </main>
-
-    <script src="../assets/js/main.js"></script>
+     <div class="overlay" id="overlay">
+ 
+    <div class="menu-panel" id="menuPanel"><ul class="menu-items">
+        <li class="menu-item"><img src="../assets/img/maserati/maserati logo writing.png"></li>
+        <li class="menu-item"><img src="../assets/img/porsche/porsche logo writing.png"></li>
+      </ul>
+ 
+    </div>
+ 
+    <div class="backdrop" id="backdrop"></div>
+ 
+  </div>
 </body>
 </html>
+
