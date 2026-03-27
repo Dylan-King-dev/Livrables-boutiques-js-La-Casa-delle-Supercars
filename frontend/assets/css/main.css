@@ -157,7 +157,7 @@ body {
 
 .hero-content {
     position: absolute;
-    bottom: 42vh;
+    bottom: 41vh;
     left: 50%;
     transform: translateX(-50%);
     text-align: center;
@@ -284,6 +284,10 @@ body {
 }
  
 .menu-item:hover { color: #c9a227; }
+
+.menu-items .menu-item:first-child img {
+  margin-left: 4vh;
+}
  
 /* Staggered fade-in */
 .menu-panel.open .menu-item              { opacity: 1; transform: translateX(0); }
