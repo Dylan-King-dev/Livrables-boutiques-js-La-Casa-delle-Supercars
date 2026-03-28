@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&display=swap");
-
 * {
     margin: 0;
     padding: 0;
@@ -103,12 +101,29 @@ body {
     display: flex;
     align-items: center;
     gap: 16px;
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
-.header-actions a {
-    color: rgba(255, 255, 255, 0.7);
+.header-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #000;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
+
+.header-icon {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.6;
 }
 
 
@@ -208,7 +223,7 @@ body {
   position: fixed;
   inset: 0;
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   pointer-events: none;
   z-index: 100;
 }
@@ -216,6 +231,7 @@ body {
 .overlay.open {
   pointer-events: all;
 }
+
  
 .menu-panel {
     background: #ffc8ab;
@@ -229,11 +245,126 @@ body {
   transform: translateX(-100%);
   transition: transform 0.55s cubic-bezier(0.77, 0, 0.175, 1);
 }
- 
+
 .menu-panel.open {
   transform: translateX(0);
 }
 
+.menu-panel.submenu-open .menu-subheader {
+  display: flex;
+}
+
+.menu-panel.submenu-open .menu-search {
+  display: none;
+}
+
+.menu-panel.submenu-transition .menu-item {
+  transform-origin: top center;
+  animation: menu-fold 0.85s ease forwards;
+}
+
+@keyframes menu-fold {
+  0% { transform: rotateX(0deg) translateY(0); opacity: 1; }
+  100% { transform: rotateX(70deg) translateY(18px); opacity: 0; }
+}
+.menu-panel.submenu-open .menu-item {
+  display: flex;
+  width: 100%;
+}
+
+.menu-subheader {
+  display: none;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.menu-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.menu-back-icon {
+  width: 18px;
+  height: 18px;
+  stroke: #000;
+  fill: none;
+  stroke-width: 2;
+}
+
+.menu-subheader img {
+  height: 15vh;
+  width: auto;
+  display: block;
+}
+
+.menu-search {
+  margin-bottom: 22px;
+  position: relative;
+}
+
+.menu-search input {
+  width: 100%;
+  padding: 10px 2px 8px;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.35);
+  background: transparent;
+  font-size: 13px;
+  line-height: 1;
+  font-family: "Everett Light", "Everett-Light", "Everett", sans-serif;
+  letter-spacing: 0.12em;
+  color: #000;
+  text-transform: uppercase;
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.3s ease;
+}
+
+.menu-search input::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+  transition: letter-spacing 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+}
+
+.menu-search input:focus {
+  border-bottom-color: #000;
+  box-shadow: 0 6px 10px -8px rgba(0, 0, 0, 0.6);
+  transform: translateY(-2px);
+}
+
+.menu-search::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.9) 50%, rgba(0,0,0,0) 100%);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.35s ease;
+  pointer-events: none;
+}
+
+.menu-search input:focus::placeholder {
+  opacity: 0.35;
+  letter-spacing: 0.2em;
+  transform: none;
+}
+
+.menu-search:focus-within::after {
+  transform: scaleX(1);
+  animation: search-sweep 1.2s ease;
+}
+
+@keyframes search-sweep {
+  0% { opacity: 0; transform: scaleX(0); }
+  35% { opacity: 1; transform: scaleX(1); }
+  100% { opacity: 0.6; transform: scaleX(1); }
+}
+ 
 .menu-close {
   display: flex;
   align-items: center;
@@ -272,8 +403,12 @@ body {
     letter-spacing: 0.04em;
     padding: 10px 0;
     cursor: pointer;
-    border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
-    font-family: "Caveat", "Comic Sans MS", cursive;
+    border-bottom: none;
+    font-family: "Everett Light", "Everett-Light", "Everett", sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    width: fit-content;
  
   /* Start invisible & shifted left */
   opacity: 0;
@@ -285,16 +420,75 @@ body {
     width: auto;
     height: 15vh;
     margin-right: 12px;
+    display: block;
 }
  
-.menu-item:hover { color: #c9a227; }
+.menu-item {
+  position: relative;
+}
 
-.menu-items .menu-item:first-child img {
+.menu-item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background: #000;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.9s ease;
+}
+
+.menu-item::before {
+  content: "";
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  margin-left: 8px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #000;
+  border-top: 2px solid #000;
+  transform: translateY(-50%) scale(0) rotate(45deg);
+  transform-origin: center;
+  transition: transform 0.9s ease;
+}
+
+.menu-item:hover::after {
+  transform: scaleX(1);
+}
+
+.menu-item:hover::before {
+  transform: translateY(-50%) scale(1) rotate(45deg);
+}
+
+.main-menu .menu-item:first-child img {
   margin-left: 4vh;
 }
 
-.menu-items .menu-item:third-child {
-  margin-left: 4vh;
+.main-menu .menu-item:nth-child(1),
+.main-menu .menu-item:nth-child(2) {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.main-menu .menu-item:nth-child(2) {
+  margin-top: -30px;
+}
+
+.main-menu .menu-item:nth-child(1)::after,
+.main-menu .menu-item:nth-child(2)::after {
+  bottom: 24px;
+}
+
+.main-menu .menu-item-text {
+  padding-left: 6vh;
+  margin-bottom: 0;
+}
+
+.main-menu .menu-item-text + .menu-item-text {
+  margin-top: 12px;
 }
  
 /* Staggered fade-in */
@@ -306,6 +500,7 @@ body {
 .menu-panel.open .menu-item:nth-child(5) { transition-delay: 0.38s; }
 .menu-panel.open .menu-item:nth-child(6) { transition-delay: 0.43s; }
 .menu-panel.open .menu-item:nth-child(7) { transition-delay: 0.48s; }
+
  
  
 /* ─────────────────────────────────────────
@@ -313,6 +508,7 @@ body {
 ───────────────────────────────────────── */
 .backdrop {
   flex: 1;
+  order: 2;
   background: rgba(0, 0, 0, 0.55);
   opacity: 0;
   transition: opacity 0.4s ease;

@@ -5,6 +5,10 @@ const menuPanel = document.getElementById('menuPanel');
 const backdrop  = document.getElementById('backdrop');
 const heroLeft = document.querySelector('.hero-left');
 const heroRight = document.querySelector('.hero-right');
+const menuItemsList = document.getElementById('menuItems');
+const menuSubheader = document.getElementById('menuSubheader');
+const menuSubImg = document.getElementById('menuSubImg');
+const menuBack = document.getElementById('menuBack');
 
 const bars = menuBtn ? menuBtn.querySelectorAll('.bar') : [];
 
@@ -49,6 +53,7 @@ function openMenu() {
 }
  
 function closeMenu() {
+  resetMenu();
   menuPanel.classList.remove('open');   // slides panel back out
   backdrop.classList.remove('open');    // fades backdrop out
   menuBtn.classList.remove('is-open');
@@ -69,6 +74,60 @@ function toggleMenu() {
 
 if (menuBtn) menuBtn.addEventListener('click', toggleMenu);
 if (backdrop) backdrop.addEventListener('click', closeMenu);
+
+const submenuItems = [
+  'TOUT VOIR',
+  'SPORT',
+  'SUPER SPORT',
+  'SUV',
+  'ELECTRIQUE',
+  'CLASSIQUE',
+];
+
+const defaultMenuHtml = menuItemsList ? menuItemsList.innerHTML : '';
+let isTransitioningMenu = false;
+
+function openSubmenu(imageSrc) {
+  if (!menuItemsList || !menuPanel) return;
+  if (isTransitioningMenu) return;
+  isTransitioningMenu = true;
+  menuPanel.classList.add('submenu-transition');
+  if (menuSubImg) menuSubImg.src = imageSrc || '';
+  setTimeout(() => {
+    menuPanel.classList.add('submenu-open');
+    menuItemsList.classList.remove('main-menu');
+    menuItemsList.innerHTML = submenuItems.map((item) => `<li class="menu-item">${item}</li>`).join('');
+    menuPanel.classList.remove('submenu-transition');
+    isTransitioningMenu = false;
+  }, 900);
+}
+
+function resetMenu() {
+  if (!menuItemsList || !menuPanel) return;
+  if (isTransitioningMenu) return;
+  isTransitioningMenu = true;
+  menuPanel.classList.remove('submenu-open');
+  if (menuSubImg) menuSubImg.src = '';
+  menuItemsList.innerHTML = defaultMenuHtml;
+  menuItemsList.classList.add('main-menu');
+  isTransitioningMenu = false;
+}
+
+if (menuItemsList) {
+  menuItemsList.addEventListener('click', (e) => {
+    const trigger = e.target.closest('.menu-item--has-submenu');
+    if (!trigger) return;
+    e.preventDefault();
+    openSubmenu(trigger.dataset.image);
+  });
+}
+
+if (menuBack) {
+  menuBack.addEventListener('click', (e) => {
+    e.preventDefault();
+    resetMenu();
+  });
+}
 
 function playHoverSound(audio) {
   if (!audioUnlocked) return;

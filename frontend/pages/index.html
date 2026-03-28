@@ -18,6 +18,20 @@
         <div class="logo">
             <a href="index.html"><img src="../assets/img/logos/Red car house emblem logo.png" alt="LA CASA"></a>
         </div>
+        <div class="header-actions">
+            <a class="header-link" href="login.html" aria-label="Se connecter">
+                <svg class="header-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="8" r="3.5"></circle>
+                    <path d="M4 20c1.7-3.6 5-5.5 8-5.5s6.3 1.9 8 5.5"></path>
+                </svg>
+            </a>
+            <a class="header-link" href="panier.html" aria-label="Panier">
+                <svg class="header-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M7 7h10l-1.2 11H8.2L7 7z"></path>
+                    <path d="M9 7V5a3 3 0 0 1 6 0v2"></path>
+                </svg>
+            </a>
+        </div>
     </header>
 
     <main> 
@@ -38,10 +52,28 @@
     </main>
      <div class="overlay" id="overlay">
  
-    <div class="menu-panel" id="menuPanel"><ul class="menu-items">
-        <li class="menu-item"><img src="../assets/img/maserati/maserati logo writing.png"></li>
-        <li class="menu-item"><img src="../assets/img/porsche/porsche logo writing.png"></li>
-        <li class="menu-item">Favoris</li>
+    <div class="menu-panel" id="menuPanel">
+      <div class="menu-subheader" id="menuSubheader">
+        <button class="menu-back" id="menuBack" aria-label="Retour">
+          <svg class="menu-back-icon" viewBox="0 0 20 20" aria-hidden="true">
+            <path d="M12.5 4.5L7 10l5.5 5.5"></path>
+          </svg>
+          <img id="menuSubImg" src="" alt="">
+        </button>
+      </div>
+      <div class="menu-search">
+        <input type="search" placeholder="Écrivez Ici" aria-label="Search">
+      </div>
+      <ul class="menu-items main-menu" id="menuItems">
+        <li class="menu-item menu-item--has-submenu" data-image="../assets/img/maserati/maserati logo writing.png">
+          <img src="../assets/img/maserati/maserati logo writing.png" alt="Maserati">
+        </li>
+        <li class="menu-item menu-item--has-submenu" data-image="../assets/img/porsche/porsche logo writing.png">
+          <img src="../assets/img/porsche/porsche logo writing.png" alt="Porsche">
+        </li>
+        <li class="menu-item menu-item-text">FAVORIS</li>
+        <li class="menu-item menu-item-text">PANIER</li>
+        <li class="menu-item menu-item-text">PROFILE</li>
       </ul>
  
     </div>
@@ -51,4 +83,6 @@
   </div>
 </body>
 </html>
+
+
 
