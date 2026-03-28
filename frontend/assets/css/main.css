@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&display=swap");
+
 * {
     margin: 0;
     padding: 0;
@@ -206,6 +208,7 @@ body {
   position: fixed;
   inset: 0;
   display: flex;
+  justify-content: flex-end;
   pointer-events: none;
   z-index: 100;
 }
@@ -270,6 +273,7 @@ body {
     padding: 10px 0;
     cursor: pointer;
     border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+    font-family: "Caveat", "Comic Sans MS", cursive;
  
   /* Start invisible & shifted left */
   opacity: 0;
@@ -286,6 +290,10 @@ body {
 .menu-item:hover { color: #c9a227; }
 
 .menu-items .menu-item:first-child img {
+  margin-left: 4vh;
+}
+
+.menu-items .menu-item:third-child {
   margin-left: 4vh;
 }
  
