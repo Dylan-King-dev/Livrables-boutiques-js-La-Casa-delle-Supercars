@@ -119,9 +119,33 @@
       transition: transform 0.6s ease;
     }
 
+    .carousel-track.is-continuous {
+      display: flex;
+      width: calc(100% * var(--slides));
+      transition: none;
+      animation: scrollBand 30s linear infinite;
+      cursor: default;
+    }
+
+    .carousel-track.is-continuous:hover {
+      cursor: pointer;
+    }
+
+    .carousel-track.is-continuous.is-dragging {
+      cursor: grabbing;
+    }
+
+    .carousel-track.is-continuous.is-paused {
+      animation-play-state: paused;
+    }
+
     .carousel-slide {
       width: 100%;
       height: 100%;
+    }
+
+    .carousel-track.is-continuous .carousel-slide {
+      flex: 0 0 calc(100% / var(--slides));
     }
 
     .carousel-slide img {
@@ -133,16 +157,17 @@
 
     .carousel-controls {
       position: absolute;
-      bottom: 28px;
-      left: 50%;
-      transform: translateX(-50%);
+      bottom: 24px;
+      left: 24px;
+      transform: none;
       display: inline-flex;
       gap: 10px;
       background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.12);
       border-radius: 999px;
       padding: 6px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-      z-index: 2;
+      z-index: 10;
     }
 
     .carousel-btn {
@@ -185,6 +210,11 @@
       box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.35);
     }
 
+    .carousel-indicators.is-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
     .panel {
       position: absolute;
       top: 120px;
@@ -212,6 +242,11 @@
     @keyframes cardIn {
       from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scrollBand {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
     }
 
     .card-top {
@@ -245,6 +280,39 @@
       border-radius: 999px;
       border: 1px solid rgba(16, 18, 20, 0.2);
       background: #fff;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bookmark.is-active {
+      background: radial-gradient(circle at top left, #ffd39b, #c28b2c);
+      color: #1a1408;
+      border-color: rgba(194, 139, 44, 0.8);
+      box-shadow: 0 10px 22px rgba(194, 139, 44, 0.45), 0 0 0 2px rgba(255, 211, 155, 0.4);
+      transform: translateY(-1px) scale(1.06);
+      animation: fav-pop 0.35s ease;
+    }
+
+    .bookmark.is-active::after {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.8), transparent 60%);
+      opacity: 0.7;
+      animation: fav-glint 1.4s ease infinite;
+    }
+
+    @keyframes fav-pop {
+      0% { transform: scale(0.9); }
+      60% { transform: scale(1.12); }
+      100% { transform: scale(1.05); }
+    }
+
+    @keyframes fav-glint {
+      0% { transform: translateX(-20%); opacity: 0.1; }
+      50% { transform: translateX(0); opacity: 0.6; }
+      100% { transform: translateX(20%); opacity: 0.1; }
     }
 
     .title {
@@ -601,6 +669,7 @@
       .carousel-indicators { right: 6vw; }
     }
   </style>
+  <link rel="stylesheet" href="../assets/css/footer.css" />
 </head>
 <body>
   <header class="topbar">
@@ -634,8 +703,7 @@
           </div>
         </div>
         <div class="carousel-controls">
-          <button class="carousel-btn" type="button" id="prevSlide" aria-label="Image précédente" aria-controls="carouselTrack">‹</button>
-          <button class="carousel-btn" type="button" id="nextSlide" aria-label="Image suivante" aria-controls="carouselTrack">›</button>
+          <button class="carousel-btn" type="button" id="pauseSlides" aria-label="Mettre en pause" aria-pressed="false">Ⅱ</button>
         </div>
         <div class="carousel-indicators" id="carouselIndicators" aria-label="Indicateurs de carrousel">
           <button type="button" class="active" data-index="0" aria-label="Aller à l'image 1"></button>
@@ -718,7 +786,27 @@
     <div class="viewer-indicators" id="viewerIndicators"></div>
     <div class="viewer-caption" id="viewerCaption"></div>
   </div>
-  <div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
+    <footer class="site-footer">
+    <div class="footer-col">
+      <strong>La Casa</strong>
+      <span>Atelier Supercars</span>
+    </div>
+    <div class="footer-col">
+      <a href="cataloguePorsche.html">Porsche</a>
+      <a href="catalogueMaserati.html">Maserati</a>
+      <a href="index.html">Accueil</a>
+    </div>
+    <div class="footer-col">
+      <a href="favoris.html">Favoris</a>
+      <a href="panier.html">Panier</a>
+      <a href="login.html">Compte</a>
+    </div>
+    <div class="footer-col">
+      <span>Livraison sécurisée</span>
+      <span>Service client</span>
+      <span>Essais privés</span>
+    </div>
+  </footer><div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
   <aside class="account-drawer" id="accountDrawer" aria-hidden="true">
     <div class="drawer-header">
       <span class="drawer-title">Compte</span>
@@ -737,3 +825,5 @@
   <script src="../js/account-drawer.js"></script>
 </body>
 </html>
+
+

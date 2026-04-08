@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../assets/css/account-drawer.css">
     <script src="../js/main.js" defer></script>
     <title>Accueil</title>  
+  <link rel="stylesheet" href="../assets/css/footer.css" />
 </head>
 <body>
 
@@ -38,22 +39,22 @@
     <main> 
         <div class="hero">
             <div class="hero-left">
-                <img src="../assets/img/maserati/Maserati-index.png" alt="Maserati">
+                <img src="../assets/img/maserati/Maserati-index.png" alt="Maserati" loading="eager" decoding="async">
                 <div class="hero-content">
-                    <a href="catalogueMaserati.html" class="btn-cta">DÃ©couvrir</a>
+                    <a href="catalogueMaserati.html" class="btn-cta">Découvrir</a>
                 </div>
             </div>
             <div class="hero-right">
-                <img src="../assets/img/porsche/Porsche-index.png" alt="Porsche">
+                <img src="../assets/img/porsche/Porsche-index.png" alt="Porsche" loading="eager" decoding="async">
                 <div class="hero-content">
-                    <a href="cataloguePorsche.html" class="btn-cta">DÃ©couvrir</a>
+                    <a href="cataloguePorsche.html" class="btn-cta">Découvrir</a>
                 </div>
             </div>
         </div>
     </main>
      <div class="overlay" id="overlay">    <div class="menu-panel" id="menuPanel">
       <div class="menu-search">
-        <input type="search" placeholder="Ã‰crivez Ici" aria-label="Search">
+        <input type="search" placeholder="Écrivez Ici" aria-label="Search">
       </div>
       <ul class="menu-items main-menu" id="menuItems">
         <li class="menu-item">
@@ -76,23 +77,46 @@
     <div class="backdrop" id="backdrop"></div>
  
   </div>
-  <div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
+    <footer class="site-footer">
+    <div class="footer-col">
+      <strong>La Casa</strong>
+      <span>Atelier Supercars</span>
+    </div>
+    <div class="footer-col">
+      <a href="cataloguePorsche.html">Porsche</a>
+      <a href="catalogueMaserati.html">Maserati</a>
+      <a href="index.html">Accueil</a>
+    </div>
+    <div class="footer-col">
+      <a href="favoris.html">Favoris</a>
+      <a href="panier.html">Panier</a>
+      <a href="login.html">Compte</a>
+    </div>
+    <div class="footer-col">
+      <span>Livraison sécurisée</span>
+      <span>Service client</span>
+      <span>Essais privés</span>
+    </div>
+  </footer><div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
   <aside class="account-drawer" id="accountDrawer" aria-hidden="true">
     <div class="drawer-header">
       <span class="drawer-title">Compte</span>
-      <button class="drawer-close" type="button" data-drawer-close aria-label="Fermer">Ã—</button>
+      <button class="drawer-close" type="button" data-drawer-close aria-label="Fermer">×</button>
     </div>
     <div class="drawer-body">
       <p>Connectez-vous pour retrouver vos favoris, votre panier et vos commandes.</p>
     </div>
     <div class="drawer-actions">
       <a class="primary" href="login.html">Se connecter</a>
-      <a href="register.html">CrÃ©er un compte</a>
+      <a href="register.html">Créer un compte</a>
     </div>
   </aside>
   <script src="../js/account-drawer.js"></script>
 </body>
 </html>
+
+
+
 
 
 

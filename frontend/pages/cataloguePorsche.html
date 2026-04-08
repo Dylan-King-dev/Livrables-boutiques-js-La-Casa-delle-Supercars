@@ -59,6 +59,18 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      position: relative;
+    }
+
+    .page::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(179, 18, 26, 0.06), transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(14, 15, 17, 0.05), transparent 55%);
+      pointer-events: none;
+      z-index: -1;
     }
 
     .topbar {
@@ -683,6 +695,7 @@
       }
     }
   </style>
+  <link rel="stylesheet" href="../assets/css/footer.css" />
 </head>
 <body>
   <div class="page">
@@ -924,7 +937,7 @@
       </div>
     </section>
 
-    <footer>
+    <footer class="site-footer">
       <div>
         <strong>Maison Porsche</strong>
       </div>
@@ -950,4 +963,5 @@
   <script src="../js/account-drawer.js"></script>
 </body>
 </html>
+
 

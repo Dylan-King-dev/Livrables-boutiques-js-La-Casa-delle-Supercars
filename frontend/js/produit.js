@@ -5,6 +5,7 @@ const product = getProduct(productId);
 const track = document.getElementById("carouselTrack");
 const prevBtn = document.getElementById("prevSlide");
 const nextBtn = document.getElementById("nextSlide");
+const pauseBtn = document.getElementById("pauseSlides");
 const indicators = Array.from(document.querySelectorAll("#carouselIndicators button"));
 const colorOptions = document.getElementById("colorOptions");
 const colorLabel = document.getElementById("colorLabel");
@@ -36,6 +37,8 @@ let touchStartX = 0;
 let touchDeltaX = 0;
 let viewerIndex = 0;
 let viewerImages = [];
+let isPaused = false;
+let continuousMode = true;
 
 // Met a jour l'aperçu plein écran.
 const updateViewer = (nextIndex) => {
@@ -89,32 +92,49 @@ const closeViewer = () => {
 
 // Met a jour la position du carrousel et l'indicateur actif.
 const updateCarousel = (nextIndex) => {
+  if (continuousMode) return;
   index = (nextIndex + indicators.length) % indicators.length;
   track.style.transform = `translateX(-${index * 100}%)`;
   indicators.forEach((dot, i) => dot.classList.toggle("active", i === index));
 };
 
+
 // Remplace les images du carrousel pour la couleur selectionnee.
 const setSlides = (images, label) => {
-  const slides = Array.from(track.querySelectorAll("img"));
   const resolved = images.map((src) => src || product.image);
-  slides.forEach((img, i) => {
-    const src = resolved[i] || resolved[0] || product.image;
+  const band = resolved.concat(resolved);
+  track.innerHTML = "";
+  band.forEach((src, i) => {
+    const slide = document.createElement("div");
+    slide.className = "carousel-slide";
+    const img = document.createElement("img");
     img.src = src;
-    img.alt = `${product.name} - ${label} - vue ${i + 1}`;
+    img.alt = `${product.name} - ${label} - vue ${((i % resolved.length) + 1)}`;
     img.loading = i === 0 ? "eager" : "lazy";
     img.tabIndex = 0;
     img.setAttribute("role", "button");
     img.setAttribute("aria-label", `Agrandir ${img.alt}`);
-    img.onclick = () => openViewer(resolved, i);
+    img.onclick = () => openViewer(resolved, i % resolved.length);
     img.onkeydown = (e) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        openViewer(resolved, i);
+        openViewer(resolved, i % resolved.length);
       }
     };
+    slide.appendChild(img);
+    track.appendChild(slide);
   });
-  updateCarousel(0);
+  track.style.setProperty("--slides", band.length);
+  track.classList.add("is-continuous");
+  track.classList.remove("is-paused");
+  if (pauseBtn) {
+    pauseBtn.textContent = "Ⅱ";
+    pauseBtn.setAttribute("aria-pressed", "false");
+  }
+  if (prevBtn) prevBtn.disabled = true;
+  if (nextBtn) nextBtn.disabled = true;
+  const indicatorsWrap = document.getElementById("carouselIndicators");
+  if (indicatorsWrap) indicatorsWrap.classList.add("is-hidden");
 };
 
 // Affiche les options de couleur et branche les clics.
@@ -165,6 +185,7 @@ const refreshFavState = () => {
   const favs = getList(STORAGE_KEYS.favs);
   const isFav = favs.includes(product.id);
   toggleFavBtn.style.color = isFav ? "#2a2f36" : "inherit";
+  toggleFavBtn.classList.toggle("is-active", isFav);
   toggleFavBtn.setAttribute("aria-pressed", isFav ? "true" : "false");
   toggleFavBtn.setAttribute("aria-label", isFav ? "Retirer des favoris" : "Ajouter aux favoris");
 };
@@ -197,9 +218,20 @@ renderColors();
 refreshFavState();
 
 // Va a l'image precedente.
-prevBtn.addEventListener("click", () => updateCarousel(index - 1));
+if (prevBtn) prevBtn.addEventListener("click", () => updateCarousel(index - 1));
 // Va a l'image suivante.
-nextBtn.addEventListener("click", () => updateCarousel(index + 1));
+if (nextBtn) nextBtn.addEventListener("click", () => updateCarousel(index + 1));
+if (pauseBtn) {
+  pauseBtn.addEventListener("click", () => {
+    isPaused = !isPaused;
+    pauseBtn.setAttribute("aria-pressed", isPaused ? "true" : "false");
+    pauseBtn.setAttribute("aria-label", isPaused ? "Reprendre" : "Mettre en pause");
+    pauseBtn.textContent = isPaused ? "▶" : "Ⅱ";
+    if (track) {
+      track.classList.toggle("is-paused", isPaused);
+    }
+  });
+}
 // Ajoute le clic sur chaque indicateur.
 indicators.forEach((dot) => {
   // Saute vers l'image correspondante a l'indicateur.
