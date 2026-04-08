@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr"> 
 <head>
     <meta charset="UTF-8">
@@ -40,45 +40,39 @@
             <div class="hero-left">
                 <img src="../assets/img/maserati/Maserati-index.png" alt="Maserati">
                 <div class="hero-content">
-                    <a href="catalogueMaserati.html" class="btn-cta">Découvrir</a>
+                    <a href="catalogueMaserati.html" class="btn-cta">DÃ©couvrir</a>
                 </div>
             </div>
             <div class="hero-right">
                 <img src="../assets/img/porsche/Porsche-index.png" alt="Porsche">
                 <div class="hero-content">
-                    <a href="cataloguePorsche.html" class="btn-cta">Découvrir</a>
+                    <a href="cataloguePorsche.html" class="btn-cta">DÃ©couvrir</a>
                 </div>
             </div>
         </div>
     </main>
-     <div class="overlay" id="overlay">
- 
-    <div class="menu-panel" id="menuPanel">
-      <div class="menu-subheader" id="menuSubheader">
-        <button class="menu-back" id="menuBack" aria-label="Retour">
-          <svg class="menu-back-icon" viewBox="0 0 20 20" aria-hidden="true">
-            <path d="M12.5 4.5L7 10l5.5 5.5"></path>
-          </svg>
-          <img id="menuSubImg" src="" alt="">
-        </button>
-      </div>
+     <div class="overlay" id="overlay">    <div class="menu-panel" id="menuPanel">
       <div class="menu-search">
-        <input type="search" placeholder="Écrivez Ici" aria-label="Search">
+        <input type="search" placeholder="Ã‰crivez Ici" aria-label="Search">
       </div>
       <ul class="menu-items main-menu" id="menuItems">
-        <li class="menu-item menu-item--has-submenu" data-image="../assets/img/maserati/maserati logo writing.png">
-          <img src="../assets/img/maserati/maserati logo writing.png" alt="Maserati">
+        <li class="menu-item">
+          <a href="catalogueMaserati.html" aria-label="Aller au catalogue Maserati">
+            <img src="../assets/img/maserati/maserati logo writing.png" alt="Maserati">
+          </a>
         </li>
-        <li class="menu-item menu-item--has-submenu" data-image="../assets/img/porsche/porsche logo writing.png">
-          <img src="../assets/img/porsche/porsche logo writing.png" alt="Porsche">
+        <li class="menu-item">
+          <a href="cataloguePorsche.html" aria-label="Aller au catalogue Porsche">
+            <img src="../assets/img/porsche/porsche logo writing.png" alt="Porsche">
+          </a>
         </li>
-        <li class="menu-item menu-item-text">FAVORIS</li>
-        <li class="menu-item menu-item-text">PANIER</li>
-        <li class="menu-item menu-item-text">PROFILE</li>
+        <li class="menu-item menu-item-text"><a href="favoris.html">FAVORIS</a></li>
+        <li class="menu-item menu-item-text"><a href="panier.html">PANIER</a></li>
+        <li class="menu-item menu-item-text"><a href="login.html">PROFILE</a></li>
       </ul>
- 
+
     </div>
- 
+
     <div class="backdrop" id="backdrop"></div>
  
   </div>
@@ -86,19 +80,20 @@
   <aside class="account-drawer" id="accountDrawer" aria-hidden="true">
     <div class="drawer-header">
       <span class="drawer-title">Compte</span>
-      <button class="drawer-close" type="button" data-drawer-close aria-label="Fermer">×</button>
+      <button class="drawer-close" type="button" data-drawer-close aria-label="Fermer">Ã—</button>
     </div>
     <div class="drawer-body">
       <p>Connectez-vous pour retrouver vos favoris, votre panier et vos commandes.</p>
     </div>
     <div class="drawer-actions">
       <a class="primary" href="login.html">Se connecter</a>
-      <a href="register.html">Créer un compte</a>
+      <a href="register.html">CrÃ©er un compte</a>
     </div>
   </aside>
   <script src="../js/account-drawer.js"></script>
 </body>
 </html>
+
 
 
 

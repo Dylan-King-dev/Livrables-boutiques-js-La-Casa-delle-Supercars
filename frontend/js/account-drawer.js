@@ -4,8 +4,13 @@
   const backdrop = document.getElementById("drawerBackdrop");
   if (!drawer || !backdrop) return;
 
+  drawer.hidden = true;
+  backdrop.hidden = true;
+
   // Ouvre le tiroir de compte coulissant.
   const openDrawer = () => {
+    drawer.hidden = false;
+    backdrop.hidden = false;
     drawer.classList.add("open");
     backdrop.classList.add("open");
     drawer.setAttribute("aria-hidden", "false");
@@ -18,6 +23,8 @@
     backdrop.classList.remove("open");
     drawer.setAttribute("aria-hidden", "true");
     document.body.classList.remove("drawer-open");
+    drawer.hidden = true;
+    backdrop.hidden = true;
   };
 
   document.querySelectorAll("[data-account-link]").forEach((link) => {

@@ -234,7 +234,7 @@ body {
 
  
 .menu-panel {
-    background: #ffc8ab;
+    background: #f7f3ee;
     width: 340px;
     height: 100%;
     padding: 10vh 40px 40px;
@@ -414,6 +414,11 @@ body {
   opacity: 0;
   transform: translateX(-20px);
   transition: opacity 0.3s ease, transform 0.3s ease, color 0.2s;
+}
+
+.menu-item a {
+  color: #000;
+  text-decoration: none;
 }
 
 .menu-item img{

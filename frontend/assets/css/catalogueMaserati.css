@@ -21,9 +21,17 @@
 
 body {
   font-family: "Source Sans 3", "Segoe UI", sans-serif;
-  background: var(--paper);
+  background: radial-gradient(circle at top left, #ffffff 0%, var(--paper) 55%, var(--sand) 100%);
   color: var(--ink);
   line-height: 1.6;
+  overflow-x: hidden;
+  opacity: 0;
+  animation: page-in 0.9s ease forwards;
+}
+
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 img {
@@ -126,6 +134,10 @@ a {
   color: var(--copper);
 }
 
+.topbar-actions a:hover {
+  transform: translateY(-1px);
+}
+
 .hero {
   position: relative;
   min-height: calc(100vh - 74px);
@@ -196,6 +208,7 @@ a {
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .btn {
@@ -230,6 +243,11 @@ a {
 .btn-ghost:hover {
   border-color: var(--copper);
   color: var(--copper);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 25px rgba(12, 15, 20, 0.25);
 }
 
 .hero-stats {
@@ -392,6 +410,13 @@ a {
   display: flex;
   flex-direction: column;
   min-height: 100%;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.card:hover,
+.card:focus-within {
+  transform: translateY(-6px);
+  box-shadow: 0 28px 70px rgba(12, 15, 20, 0.28);
 }
 
 .card-link {
@@ -557,6 +582,18 @@ footer strong {
   font-weight: 600;
   font-size: 12px;
   letter-spacing: 0.2em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--copper);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 @media (max-width: 1100px) {
