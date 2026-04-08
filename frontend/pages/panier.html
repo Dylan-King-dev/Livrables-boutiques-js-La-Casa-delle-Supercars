@@ -1,0 +1,373 @@
+﻿<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Panier | La Casa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/account-drawer.css" />
+  <style>
+    :root {
+      --ink: #0c0f14;
+      --ink-soft: #1b2330;
+      --paper: #f6f3ef;
+      --sand: #e7e0d6;
+      --accent: #2b2f36;
+      --accent-dark: #15191f;
+      --mist: rgba(12, 15, 20, 0.55);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Source Sans 3", "Segoe UI", sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .topbar {
+      position: fixed;
+      inset: 0 0 auto 0;
+      height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 7vw 0 4vw;
+      background: rgba(12, 15, 20, 0.72);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      z-index: 10;
+    }
+
+    .topbar-logo img {
+      height: 72px;
+      width: auto;
+      filter: brightness(1.1);
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .topbar-actions a {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: all 0.25s ease;
+    }
+
+    .topbar-actions a:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .content {
+      padding: 120px 7vw 8vh;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 28px;
+      border-bottom: 1px solid rgba(12, 15, 20, 0.12);
+      padding-bottom: 12px;
+      font-size: 13px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .tabs a {
+      color: rgba(12, 15, 20, 0.55);
+      padding-bottom: 10px;
+      position: relative;
+    }
+
+    .tabs a.active {
+      color: var(--ink);
+    }
+
+    .tabs a.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -12px;
+      height: 2px;
+      width: 100%;
+      background: var(--accent);
+    }
+
+    .empty {
+      min-height: 55vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      gap: 16px;
+      padding: 8vh 0 0;
+    }
+
+    .empty-icon {
+      width: 46px;
+      height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      border: 1px solid rgba(12, 15, 20, 0.2);
+      color: var(--accent);
+    }
+
+    .empty h2 {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(20px, 2.2vw, 28px);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .empty p {
+      color: var(--mist);
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    .items {
+      margin-top: 6vh;
+      display: grid;
+      gap: 16px;
+    }
+
+    .item-card {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      background: #fff;
+      border: 1px solid rgba(12, 15, 20, 0.1);
+      border-radius: 12px;
+      padding: 12px 14px;
+      box-shadow: 0 12px 30px rgba(12, 15, 20, 0.1);
+    }
+
+    .item-card img {
+      width: 140px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .item-info {
+      flex: 1;
+      display: grid;
+      gap: 6px;
+    }
+
+    .item-info h3 {
+      font-size: 14px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .item-info span {
+      color: var(--mist);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .item-actions button {
+      border: 1px solid rgba(12, 15, 20, 0.2);
+      background: transparent;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .checkout {
+      margin-top: 6vh;
+      background: #fff;
+      border: 1px solid rgba(12, 15, 20, 0.1);
+      border-radius: 16px;
+      padding: 22px 20px;
+      box-shadow: 0 18px 40px rgba(12, 15, 20, 0.12);
+      display: grid;
+      gap: 16px;
+    }
+
+    .checkout h2 {
+      font-size: 14px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field label {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    .field input {
+      border: 1px solid rgba(12, 15, 20, 0.2);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 14px;
+    }
+
+    .suggestions {
+      list-style: none;
+      border: 1px solid rgba(12, 15, 20, 0.12);
+      border-radius: 12px;
+      background: #fff;
+      overflow: hidden;
+      display: none;
+    }
+
+    .suggestions li {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(12, 15, 20, 0.08);
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .suggestions li:last-child {
+      border-bottom: none;
+    }
+
+    .suggestions li:hover {
+      background: var(--sand);
+    }
+
+    .pay-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .pay-actions button {
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      border-radius: 999px;
+      padding: 12px 20px;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .btn {
+      margin-top: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 28px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      border: 1px solid var(--accent);
+      transition: all 0.25s ease;
+    }
+
+    .btn:hover {
+      background: var(--accent-dark);
+      border-color: var(--accent-dark);
+    }
+
+    @media (max-width: 900px) {
+      .topbar-actions { display: none; }
+      .topbar-logo img { height: 60px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-logo">
+      <a href="index.html">
+        <img src="../assets/img/logos/Red%20car%20house%20emblem%20logo.png" alt="La Casa" />
+      </a>
+    </div>
+    <div class="topbar-actions">
+      <a href="index.html">Accueil</a>
+      <a href="catalogueMaserati.html">Maserati</a>
+      <a href="cataloguePorsche.html">Porsche</a>
+      <a href="login.html" data-account-link>Compte</a>
+      <a href="favoris.html">Favoris</a>
+      <a href="panier.html">Panier</a>
+    </div>
+  </header>
+
+  <main class="content">
+    <nav class="tabs">
+      <a class="active" href="panier.html">Panier</a>
+      <a href="favoris.html">Favoris</a>
+    </nav>
+
+    <section class="empty" id="emptyState">
+      <div class="empty-icon">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="M7 7h10l-1.2 11H8.2L7 7z" fill="none" stroke="currentColor" stroke-width="1.6" />
+          <path d="M9 7V5a3 3 0 0 1 6 0v2" fill="none" stroke="currentColor" stroke-width="1.6" />
+        </svg>
+      </div>
+      <h2>Panier vide</h2>
+      <p>Votre panier est encore vide. Découvrez notre sélection.</p>
+      <a class="btn" href="index.html">Découvrir</a>
+    </section>
+    <section id="itemsList"></section>
+    <section class="checkout" aria-labelledby="checkoutTitle">
+      <h2 id="checkoutTitle">Paiement</h2>
+      <div class="field">
+        <label for="addressInput">Adresse de livraison</label>
+        <input id="addressInput" type="text" placeholder="12 rue de Rivoli, 75001 Paris" autocomplete="off" />
+        <ul class="suggestions" id="addressSuggestions"></ul>
+      </div>
+      <div class="field">
+        <label for="cityInput">Ville</label>
+        <input id="cityInput" type="text" placeholder="Paris" />
+      </div>
+      <div class="field">
+        <label for="postalInput">Code postal</label>
+        <input id="postalInput" type="text" placeholder="75001" />
+      </div>
+      <div class="pay-actions">
+        <button type="button">Payer maintenant</button>
+      </div>
+    </section>
+  </main>
+  <div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
+  <aside class="account-drawer" id="accountDrawer" aria-hidden="true">
+    <div class="drawer-header">
+      <span class="drawer-title">Compte</span>
+      <button class="drawer-close" type="button" data-drawer-close aria-label="Fermer">×</button>
+    </div>
+    <div class="drawer-body">
+      <p>Connectez-vous pour retrouver vos favoris, votre panier et vos commandes.</p>
+    </div>
+    <div class="drawer-actions">
+      <a class="primary" href="login.html">Se connecter</a>
+      <a href="register.html">Créer un compte</a>
+    </div>
+  </aside>
+  <script src="../js/store.js"></script>
+  <script src="../js/panier.js"></script>
+  <script src="../js/account-drawer.js"></script>
+</body>
+</html>

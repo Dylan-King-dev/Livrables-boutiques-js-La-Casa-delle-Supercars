@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/account-drawer.css">
     <script src="../js/main.js" defer></script>
     <title>Accueil</title>  
 </head>
@@ -19,7 +20,7 @@
             <a href="index.html"><img src="../assets/img/logos/Red car house emblem logo.png" alt="LA CASA"></a>
         </div>
         <div class="header-actions">
-            <a class="header-link" href="login.html" aria-label="Se connecter">
+            <a class="header-link" href="login.html" data-account-link aria-label="Se connecter">
                 <svg class="header-icon" viewBox="0 0 24 24" aria-hidden="true">
                     <circle cx="12" cy="8" r="3.5"></circle>
                     <path d="M4 20c1.7-3.6 5-5.5 8-5.5s6.3 1.9 8 5.5"></path>
@@ -39,13 +40,13 @@
             <div class="hero-left">
                 <img src="../assets/img/maserati/Maserati-index.png" alt="Maserati">
                 <div class="hero-content">
-                    <a href="catalogue.html?marque=maserati" class="btn-cta">Découvrir</a>
+                    <a href="catalogueMaserati.html" class="btn-cta">Découvrir</a>
                 </div>
             </div>
             <div class="hero-right">
                 <img src="../assets/img/porsche/Porsche-index.png" alt="Porsche">
                 <div class="hero-content">
-                    <a href="catalogue.html?marque=porsche" class="btn-cta">Découvrir</a>
+                    <a href="cataloguePorsche.html" class="btn-cta">Découvrir</a>
                 </div>
             </div>
         </div>
@@ -81,6 +82,21 @@
     <div class="backdrop" id="backdrop"></div>
  
   </div>
+  <div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
+  <aside class="account-drawer" id="accountDrawer" aria-hidden="true">
+    <div class="drawer-header">
+      <span class="drawer-title">Compte</span>
+      <button class="drawer-close" type="button" data-drawer-close aria-label="Fermer">×</button>
+    </div>
+    <div class="drawer-body">
+      <p>Connectez-vous pour retrouver vos favoris, votre panier et vos commandes.</p>
+    </div>
+    <div class="drawer-actions">
+      <a class="primary" href="login.html">Se connecter</a>
+      <a href="register.html">Créer un compte</a>
+    </div>
+  </aside>
+  <script src="../js/account-drawer.js"></script>
 </body>
 </html>
 

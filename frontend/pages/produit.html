@@ -1,0 +1,425 @@
+﻿<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Produit | La Casa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/account-drawer.css" />
+  <style>
+    :root {
+      --ink: #101214;
+      --ink-soft: #2b3036;
+      --paper: #f3f0eb;
+      --panel: #e8e3dc;
+      --accent: #2a2f36;
+      --accent-dark: #171b20;
+      --mist: rgba(16, 18, 20, 0.55);
+      --shadow: 0 25px 60px rgba(12, 15, 20, 0.25);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Source Sans 3", "Segoe UI", sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .topbar {
+      position: fixed;
+      inset: 0 0 auto 0;
+      height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 7vw 0 4vw;
+      background: rgba(12, 15, 20, 0.72);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      z-index: 10;
+    }
+
+    .topbar-logo img {
+      height: 64px;
+      width: auto;
+      filter: brightness(1.1);
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .topbar-actions a {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: all 0.25s ease;
+    }
+
+    .topbar-actions a:hover {
+      border-color: #fff;
+      color: #fff;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1.65fr 1fr;
+      gap: 0;
+      padding-top: 74px;
+    }
+
+    .gallery {
+      position: relative;
+      background: #d8d3cd;
+      min-height: calc(100vh - 74px);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .gallery::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(0,0,0,0.12), rgba(0,0,0,0));
+    }
+
+    .carousel {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .carousel-track {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 100%;
+      height: 100%;
+      transition: transform 0.6s ease;
+    }
+
+    .carousel-slide {
+      width: 100%;
+      height: 100%;
+    }
+
+    .carousel-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .carousel-controls {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      display: inline-flex;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 999px;
+      padding: 6px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      z-index: 2;
+    }
+
+    .carousel-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: none;
+      background: #fff;
+      color: var(--ink);
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .carousel-indicators {
+      position: absolute;
+      bottom: 28px;
+      right: 24px;
+      display: inline-flex;
+      gap: 8px;
+      z-index: 2;
+    }
+
+    .carousel-indicators button {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      border: none;
+      background: rgba(255, 255, 255, 0.6);
+      cursor: pointer;
+    }
+
+    .carousel-indicators button.active {
+      background: #fff;
+    }
+
+    .panel {
+      position: relative;
+      display: grid;
+      align-content: center;
+      padding: 5vh 5vw;
+      background: var(--paper);
+    }
+
+    .card {
+      background: var(--panel);
+      border-radius: 14px;
+      padding: 26px 26px 22px;
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 16px;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .bookmark {
+      width: 20px;
+      height: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      border: 1px solid rgba(16, 18, 20, 0.2);
+      background: #fff;
+    }
+
+    .title {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(20px, 2.2vw, 28px);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .meta {
+      display: flex;
+      gap: 10px;
+      color: var(--mist);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .divider {
+      height: 1px;
+      background: rgba(16, 18, 20, 0.15);
+      margin: 4px 0;
+    }
+
+    .sizes {
+      display: grid;
+      gap: 10px;
+    }
+
+    .sizes-head {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .size-options {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .size-options button {
+      border: 1px solid rgba(16, 18, 20, 0.2);
+      background: #fff;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .size-options button.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(42, 47, 54, 0.15);
+    }
+
+    .color-swatch {
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(16, 18, 20, 0.15);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .color-swatch img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .cta {
+      margin-top: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 24px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 12px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .benefits {
+      display: grid;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--mist);
+    }
+
+    .benefits span {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .benefits svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    @media (max-width: 1050px) {
+      .page { grid-template-columns: 1fr; }
+      .panel { padding: 6vh 8vw; }
+      .gallery { min-height: 50vh; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-logo">
+      <a href="index.html">
+        <img src="../assets/img/logos/Red%20car%20house%20emblem%20logo.png" alt="La Casa" />
+      </a>
+    </div>
+    <div class="topbar-actions">
+      <a href="index.html">Accueil</a>
+      <a href="catalogueMaserati.html">Maserati</a>
+      <a href="cataloguePorsche.html">Porsche</a>
+      <a href="login.html" data-account-link>Compte</a>
+      <a href="favoris.html">Favoris</a>
+      <a href="panier.html">Panier</a>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="gallery">
+      <div class="carousel" aria-label="Galerie produit">
+        <div class="carousel-track" id="carouselTrack">
+          <div class="carousel-slide">
+            <img src="" alt="" />
+          </div>
+          <div class="carousel-slide">
+            <img src="" alt="" />
+          </div>
+          <div class="carousel-slide">
+            <img src="" alt="" />
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-btn" type="button" id="prevSlide" aria-label="Image précédente">‹</button>
+          <button class="carousel-btn" type="button" id="nextSlide" aria-label="Image suivante">›</button>
+        </div>
+        <div class="carousel-indicators" id="carouselIndicators" aria-hidden="true">
+          <button type="button" class="active" data-index="0"></button>
+          <button type="button" data-index="1"></button>
+          <button type="button" data-index="2"></button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="card">
+        <div class="card-top">
+          <span id="productShort">GT3 RS</span>
+          <button class="bookmark" id="toggleFav" type="button" aria-label="Ajouter aux favoris">
+            <svg viewBox="0 0 24 24" width="12" height="12">
+              <path d="M7 4h10v16l-5-3-5 3V4z" fill="none" stroke="currentColor" stroke-width="1.6" />
+            </svg>
+          </button>
+        </div>
+        <h1 class="title" id="productTitle">Porsche 911 GT3 RS</h1>
+        <div class="meta">
+          <span id="colorLabel">Jaune</span>
+          <span id="productRef">Réf. 992/GT3RS</span>
+        </div>
+        <div class="divider"></div>
+        <div class="sizes">
+          <div class="sizes-head">
+            <span>Couleurs</span>
+            <span>Voir la palette</span>
+          </div>
+          <div class="size-options" id="colorOptions"></div>
+        </div>
+        <button class="cta" id="addToCart" type="button">Ajouter au panier</button>
+        <div class="benefits">
+          <span>
+            <svg viewBox="0 0 24 24"><path d="M4 7h16l-1.4 11H5.4L4 7z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+            Retrait en showroom gratuit
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24"><path d="M3 12h18M7 8l-4 4 4 4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+            Livraison sécurisée en Europe
+          </span>
+        </div>
+      </div>
+    </aside>
+  </main>
+  <div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
+  <aside class="account-drawer" id="accountDrawer" aria-hidden="true">
+    <div class="drawer-header">
+      <span class="drawer-title">Compte</span>
+      <button class="drawer-close" type="button" data-drawer-close aria-label="Fermer">×</button>
+    </div>
+    <div class="drawer-body">
+      <p>Connectez-vous pour retrouver vos favoris, votre panier et vos commandes.</p>
+    </div>
+    <div class="drawer-actions">
+      <a class="primary" href="login.html">Se connecter</a>
+      <a href="register.html">Créer un compte</a>
+    </div>
+  </aside>
+  <script src="../js/store.js"></script>
+  <script src="../js/produit.js"></script>
+  <script src="../js/account-drawer.js"></script>
+</body>
+</html>

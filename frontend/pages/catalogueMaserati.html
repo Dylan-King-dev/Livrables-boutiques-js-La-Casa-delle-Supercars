@@ -1,0 +1,299 @@
+﻿<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Maserati | Catalogue</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/catalogueMaserati.css" />
+  <link rel="stylesheet" href="../assets/css/account-drawer.css" />
+</head>
+<body>
+<div class="page">
+    <header class="topbar">
+      <div class="topbar-logo">
+        <img src="../assets/img/maserati/maserati%20logo%20writing.png" alt="Maserati" />
+      </div>
+      <nav>
+        <a href="#collection">Collection</a>
+      </nav>
+    <div class="topbar-actions">
+      <a href="index.html">Accueil</a>
+      <a href="cataloguePorsche.html">Porsche</a>
+      <a href="login.html" data-account-link>Compte</a>
+      <a href="favoris.html">Favoris</a>
+      <a href="panier.html">Panier</a>
+    </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-content">
+        <span class="hero-kicker">Catalogue 2026</span>
+        <h1 class="hero-title">Élégance pure, <span>ligne iconique</span>.</h1>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#sport">Explorer</a>
+        </div>
+      </div>
+      <div class="hero-media">
+        <img src="../assets/img/maserati/Maserati-index.png" alt="Maserati Hero" />
+      </div>
+    </section>
+
+    <section class="section" id="collection">
+      <div class="section-title">
+        <div>
+          <h2>Toute la collection</h2>
+          <p>Sélectionnez un type pour filtrer les modèles.</p>
+        </div>
+        <div class="filter-bar">
+          <button class="filter-toggle" id="filterToggle" type="button" aria-expanded="false">All</button>
+          <div class="filter-panel" id="filterPanel" aria-hidden="true">
+            <button class="filter-option active" type="button" data-filter="all">All</button>
+            <button class="filter-option" type="button" data-filter="Sport">Sport</button>
+            <button class="filter-option" type="button" data-filter="Super Sport">Super Sport</button>
+            <button class="filter-option" type="button" data-filter="Sport Cabrio">Sport Cabrio</button>
+            <button class="filter-option" type="button" data-filter="SUV">SUV</button>
+            <button class="filter-option" type="button" data-filter="Éléctrique">Éléctrique</button>
+          </div>
+        </div>
+      </div>
+      <div class="catalogue-grid" id="allCarsGrid">
+        <article class="card" data-category="Sport">
+          <a href="produit.html?id=maserati-granturismo" class="card-link" aria-label="Voir le produit GranTurismo">
+          <div class="card-media">
+            <img src="../assets/img/maserati/Sport/GRAN_TURISMO/GRAN_TURISMO_AVANT_NOIR.jpg" alt="GranTurismo" />
+            <span class="card-badge">Sport</span>
+          </div>
+          <div class="card-body">
+            <h3>GranTurismo</h3>
+            <p>Icône gran turismo revisitée, pour voyager vite et avec grâce.</p>
+            <div class="card-specs">
+              <span class="spec">V6 Nettuno</span>
+              <span class="spec">490 ch</span>
+              <span class="spec">AWD</span>
+              <span class="spec">GT 2+2</span>
+            </div>
+            <div class="card-footer">
+              <span>Découvrir</span>
+              <span>2 portes</span>
+            </div>
+          </div>
+          </a>
+        </article>
+
+        <article class="card" data-category="Sport">
+          <a href="produit.html?id=maserati-granturismo" class="card-link" aria-label="Voir le produit Trofeo">
+          <div class="card-media">
+            <img src="../assets/img/maserati/Sport/TROFEO/TROFEO_AVANT_NOIR.jpg" alt="Trofeo" />
+            <span class="card-badge">Trofeo</span>
+          </div>
+          <div class="card-body">
+            <h3>Trofeo</h3>
+            <p>Design radical, précision millimétrée et tempérament de piste.</p>
+            <div class="card-specs">
+              <span class="spec">V6 Nettuno</span>
+              <span class="spec">550 ch</span>
+              <span class="spec">0-100 km/h 3,9 s</span>
+              <span class="spec">Launch Control</span>
+            </div>
+            <div class="card-footer">
+              <span>Découvrir</span>
+              <span>Sport+</span>
+            </div>
+          </div>
+          </a>
+        </article>
+
+        <article class="card" data-category="Super Sport">
+          <a href="produit.html?id=maserati-granturismo" class="card-link" aria-label="Voir le produit GT2 Stradale">
+          <div class="card-media">
+            <img src="../assets/img/maserati/Super%20Sport/GT2_STRADALE/GT2_STRADALE_AVANT_NOIR.jpg" alt="GT2 Stradale" />
+            <span class="card-badge">Super Sport</span>
+          </div>
+          <div class="card-body">
+            <h3>GT2 Stradale</h3>
+            <p>Signature race-héritage et sensations extrêmes pour la route.</p>
+            <div class="card-specs">
+              <span class="spec">Aéro active</span>
+              <span class="spec">Châssis carbone</span>
+              <span class="spec">Couple 730 Nm</span>
+              <span class="spec">Track DNA</span>
+            </div>
+            <div class="card-footer">
+              <span>Découvrir</span>
+              <span>Super Sport</span>
+            </div>
+          </div>
+          </a>
+        </article>
+
+        <article class="card" data-category="Sport Cabrio">
+          <a href="produit.html?id=maserati-granturismo" class="card-link" aria-label="Voir le produit GranCabrio">
+          <div class="card-media">
+            <img src="../assets/img/maserati/Sport%20Cabrio/GRANCABRIO/GRANCABRIO_AVANT_OR.jpg" alt="GranCabrio" />
+            <span class="card-badge">Cabrio</span>
+          </div>
+          <div class="card-body">
+            <h3>GranCabrio</h3>
+            <p>Un design sculptural et une liberté totale pour quatre passagers.</p>
+            <div class="card-specs">
+              <span class="spec">V6 Nettuno</span>
+              <span class="spec">490 ch</span>
+              <span class="spec">Soft top</span>
+              <span class="spec">Son Signature</span>
+            </div>
+            <div class="card-footer">
+              <span>Découvrir</span>
+              <span>Convertible</span>
+            </div>
+          </div>
+          </a>
+        </article>
+
+        <article class="card" data-category="Sport Cabrio">
+          <a href="produit.html?id=maserati-granturismo" class="card-link" aria-label="Voir le produit GranCabrio Trofeo">
+          <div class="card-media">
+            <img src="../assets/img/maserati/Sport%20Cabrio/GRANCABRIO%20TROFEO/GRANCABRIO_TROFEO_AVANT_NOIR.jpg" alt="GranCabrio Trofeo" />
+            <span class="card-badge">Trofeo</span>
+          </div>
+          <div class="card-body">
+            <h3>GranCabrio Trofeo</h3>
+            <p>Performance souveraine et détails sur-mesure.</p>
+            <div class="card-specs">
+              <span class="spec">550 ch</span>
+              <span class="spec">Traction AWD</span>
+              <span class="spec">Suspension Active</span>
+              <span class="spec">Intérieur cuir</span>
+            </div>
+            <div class="card-footer">
+              <span>Découvrir</span>
+              <span>Sport+</span>
+            </div>
+          </div>
+          </a>
+        </article>
+
+        <article class="card" data-category="SUV">
+          <a href="produit.html?id=maserati-granturismo" class="card-link" aria-label="Voir le produit Grecale">
+          <div class="card-media">
+            <img src="../assets/img/maserati/SUV/GRECALE/GRECALE_AVANT_NOIR.jpg" alt="Grecale" />
+            <span class="card-badge">SUV</span>
+          </div>
+          <div class="card-body">
+            <h3>Grecale</h3>
+            <p>Allure athlétique et intérieur couture pour la ville et les grands espaces.</p>
+            <div class="card-specs">
+              <span class="spec">300 ch</span>
+              <span class="spec">Traction AWD</span>
+              <span class="spec">Cockpit digital</span>
+              <span class="spec">ADN Luxe</span>
+            </div>
+            <div class="card-footer">
+              <span>Découvrir</span>
+              <span>5 portes</span>
+            </div>
+          </div>
+          </a>
+        </article>
+
+        <article class="card" data-category="SUV">
+          <a href="produit.html?id=maserati-granturismo" class="card-link" aria-label="Voir le produit Grecale Modena">
+          <div class="card-media">
+            <img src="../assets/img/maserati/SUV/GRECALE%20MODENA/GRECALE_MODENA_AVANT_NOIR.jpg" alt="Grecale Modena" />
+            <span class="card-badge">Modena</span>
+          </div>
+          <div class="card-body">
+            <h3>Grecale Modena</h3>
+            <p>Finition sportive et détails haute couture pour un SUV d’exception.</p>
+            <div class="card-specs">
+              <span class="spec">330 ch</span>
+              <span class="spec">Suspension adaptative</span>
+              <span class="spec">Jantes 20"</span>
+              <span class="spec">Son premium</span>
+            </div>
+            <div class="card-footer">
+              <span>Découvrir</span>
+              <span>Modena</span>
+            </div>
+          </div>
+          </a>
+        </article>
+
+        <article class="card" data-category="Éléctrique">
+          <a href="produit.html?id=maserati-granturismo" class="card-link" aria-label="Voir le produit GranTurismo Folgore">
+          <div class="card-media">
+            <img src="../assets/img/maserati/Éléctrique/GRANTURISMO_FOLGORE/GRANTURISMO_FOLGORE_AVANT_NOIR.jpg" alt="GranTurismo Folgore" />
+            <span class="card-badge">Folgore</span>
+          </div>
+          <div class="card-body">
+            <h3>GranTurismo Folgore</h3>
+            <p>Un gran turismo électrique au raffinement futuriste.</p>
+            <div class="card-specs">
+              <span class="spec">Jusqu'à 760 ch</span>
+              <span class="spec">800V</span>
+              <span class="spec">Couple immédiat</span>
+              <span class="spec">Recharge rapide</span>
+            </div>
+            <div class="card-footer">
+              <span>Découvrir</span>
+              <span>EV</span>
+            </div>
+          </div>
+          </a>
+        </article>
+
+        <article class="card" data-category="Éléctrique">
+          <a href="produit.html?id=maserati-granturismo" class="card-link" aria-label="Voir le produit Grecale Folgore">
+          <div class="card-media">
+            <img src="../assets/img/maserati/Éléctrique/GRECALE_FOLGORE/GRECALE_FOLGORE_AVANT_NOIR.jpg" alt="Grecale Folgore" />
+            <span class="card-badge">Folgore</span>
+          </div>
+          <div class="card-body">
+            <h3>Grecale Folgore</h3>
+            <p>Le SUV électrique Maserati, dynamisme et sophistication.</p>
+            <div class="card-specs">
+              <span class="spec">Jusqu'à 500 ch</span>
+              <span class="spec">0-100 km/h 4,1 s</span>
+              <span class="spec">Autonomie premium</span>
+              <span class="spec">Intérieur durable</span>
+            </div>
+            <div class="card-footer">
+              <span>Découvrir</span>
+              <span>EV SUV</span>
+            </div>
+          </div>
+          </a>
+        </article>
+      </div>
+    </section>
+
+    <footer>
+      <div>
+        <strong>Maison Maserati</strong>
+      </div>
+      <div>Catalogue exclusif</div>
+      <div>Service client</div>
+      <div>Essais privés</div>
+    </footer>
+  </div>
+  <div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
+  <aside class="account-drawer" id="accountDrawer" aria-hidden="true">
+    <div class="drawer-header">
+      <span class="drawer-title">Compte</span>
+      <button class="drawer-close" type="button" data-drawer-close aria-label="Fermer">×</button>
+    </div>
+    <div class="drawer-body">
+      <p>Connectez-vous pour retrouver vos favoris, votre panier et vos commandes.</p>
+    </div>
+    <div class="drawer-actions">
+      <a class="primary" href="login.html">Se connecter</a>
+      <a href="register.html">Créer un compte</a>
+    </div>
+  </aside>
+  <script src="../js/catalogueMaserati.js" defer></script>
+  <script src="../js/account-drawer.js"></script>
+</body>
+</html>
+
