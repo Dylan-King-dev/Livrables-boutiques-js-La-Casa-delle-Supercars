@@ -1,11 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr"> 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/account-drawer.css">
     <script src="../js/main.js" defer></script>
     <title>Accueil</title>  
+  <link rel="stylesheet" href="../assets/css/footer.css" />
 </head>
 <body>
 
@@ -18,37 +20,104 @@
         <div class="logo">
             <a href="index.html"><img src="../assets/img/logos/Red car house emblem logo.png" alt="LA CASA"></a>
         </div>
+        <div class="header-actions">
+            <a class="header-link" href="login.html" data-account-link aria-label="Se connecter">
+                <svg class="header-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="8" r="3.5"></circle>
+                    <path d="M4 20c1.7-3.6 5-5.5 8-5.5s6.3 1.9 8 5.5"></path>
+                </svg>
+            </a>
+            <a class="header-link" href="panier.html" aria-label="Panier">
+                <svg class="header-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M7 7h10l-1.2 11H8.2L7 7z"></path>
+                    <path d="M9 7V5a3 3 0 0 1 6 0v2"></path>
+                </svg>
+            </a>
+        </div>
     </header>
 
     <main> 
         <div class="hero">
             <div class="hero-left">
-                <img src="../assets/img/maserati/Maserati-index.png" alt="Maserati">
+                <img src="../assets/img/maserati/Maserati-index.png" alt="Maserati" loading="eager" decoding="async">
                 <div class="hero-content">
-                    <a href="catalogue.html?marque=maserati" class="btn-cta">Découvrir</a>
+                    <a href="catalogueMaserati.html" class="btn-cta">Découvrir</a>
                 </div>
             </div>
             <div class="hero-right">
-                <img src="../assets/img/porsche/Porsche-index.png" alt="Porsche">
+                <img src="../assets/img/porsche/Porsche-index.png" alt="Porsche" loading="eager" decoding="async">
                 <div class="hero-content">
-                    <a href="catalogue.html?marque=porsche" class="btn-cta">Découvrir</a>
+                    <a href="cataloguePorsche.html" class="btn-cta">Découvrir</a>
                 </div>
             </div>
         </div>
     </main>
-     <div class="overlay" id="overlay">
- 
-    <div class="menu-panel" id="menuPanel"><ul class="menu-items">
-        <li class="menu-item"><img src="../assets/img/maserati/maserati logo writing.png"></li>
-        <li class="menu-item"><img src="../assets/img/porsche/porsche logo writing.png"></li>
-        <li class="menu-item">Favoris</li>
+     <div class="overlay" id="overlay">    <div class="menu-panel" id="menuPanel">
+      <div class="menu-search">
+        <input type="search" placeholder="Écrivez Ici" aria-label="Search">
+      </div>
+      <ul class="menu-items main-menu" id="menuItems">
+        <li class="menu-item">
+          <a href="catalogueMaserati.html" aria-label="Aller au catalogue Maserati">
+            <img src="../assets/img/maserati/maserati logo writing.png" alt="Maserati">
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="cataloguePorsche.html" aria-label="Aller au catalogue Porsche">
+            <img src="../assets/img/porsche/porsche logo writing.png" alt="Porsche">
+          </a>
+        </li>
+        <li class="menu-item menu-item-text"><a href="favoris.html">FAVORIS</a></li>
+        <li class="menu-item menu-item-text"><a href="panier.html">PANIER</a></li>
+        <li class="menu-item menu-item-text"><a href="login.html">PROFILE</a></li>
       </ul>
- 
+
     </div>
- 
+
     <div class="backdrop" id="backdrop"></div>
  
   </div>
+    <footer class="site-footer">
+    <div class="footer-col">
+      <strong>La Casa</strong>
+      <span>Atelier Supercars</span>
+    </div>
+    <div class="footer-col">
+      <a href="cataloguePorsche.html">Porsche</a>
+      <a href="catalogueMaserati.html">Maserati</a>
+      <a href="index.html">Accueil</a>
+    </div>
+    <div class="footer-col">
+      <a href="favoris.html">Favoris</a>
+      <a href="panier.html">Panier</a>
+      <a href="login.html">Compte</a>
+    </div>
+    <div class="footer-col">
+      <span>Livraison sécurisée</span>
+      <span>Service client</span>
+      <span>Essais privés</span>
+    </div>
+  </footer><div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
+  <aside class="account-drawer" id="accountDrawer" aria-hidden="true">
+    <div class="drawer-header">
+      <span class="drawer-title">Compte</span>
+      <button class="drawer-close" type="button" data-drawer-close aria-label="Fermer">×</button>
+    </div>
+    <div class="drawer-body">
+      <p>Connectez-vous pour retrouver vos favoris, votre panier et vos commandes.</p>
+    </div>
+    <div class="drawer-actions">
+      <a class="primary" href="login.html">Se connecter</a>
+      <a href="register.html">Créer un compte</a>
+    </div>
+  </aside>
+  <script src="../js/account-drawer.js"></script>
 </body>
 </html>
+
+
+
+
+
+
 
