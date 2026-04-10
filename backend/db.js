@@ -1,18 +1,24 @@
-console.log('ENV PATH:', path.join(__dirname, '.env'));
-console.log('DB_PASS loaded:', process.env.DB_PASS);
+console.log('DB.JS LOADED');
+
 const mysql = require('mysql2/promise');
-const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const db = mysql.createPool({
-	host: process.env.DB_HOST || 'localhost',
-	user: process.env.DB_USER || 'root',
-	password: process.env.DB_PASS || '',
-	database: process.env.DB_NAME || 'boutique_auto',
-	waitForConnections: true,
-	connectionLimit: 1,
-	queueLimit: 0,
-	charset: 'utf8mb4',
+    host: '127.0.0.1',
+    port: 3306,
+    user: 'root',
+    password: 'root',
+    database: 'boutique_auto',
+    waitForConnections: true,
+    connectionLimit: 1,
+    queueLimit: 0,
+    charset: 'utf8mb4',
 });
+
+db.getConnection()
+  .then(conn => {
+    console.log('Pool connected successfully!');
+    conn.release();
+  })
+  .catch(err => console.error('Pool connection error:', err.message));
 
 module.exports = db;
