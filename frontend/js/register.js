@@ -1,4 +1,6 @@
 const button = document.querySelector('.btn');
+const guestBtn = document.getElementById("guestContinue");
+
 
 button.addEventListener('click', async () => {
   const prenom = document.getElementById('firstName').value;
@@ -43,3 +45,13 @@ button.addEventListener('click', async () => {
     alert('Erreur serveur');
   }
 });
+
+if (guestBtn) {
+  guestBtn.addEventListener("click", () => {
+    if (document.referrer) {
+      window.location.href = document.referrer;
+    } else {
+      window.history.back();
+    }
+  });
+}
