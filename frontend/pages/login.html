@@ -1,4 +1,4 @@
-ï»¿<!doctype html>
+<!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
@@ -7,185 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --ink: #0c0f14;
-      --ink-soft: #1b2330;
-      --paper: #f6f3ef;
-      --sand: #e7e0d6;
-      --accent: #2b2f36;
-      --accent-dark: #15191f;
-      --mist: rgba(12, 15, 20, 0.55);
-      --shadow: 0 25px 60px rgba(12, 15, 20, 0.2);
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: "Source Sans 3", "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #f7f2ea 0%, var(--paper) 55%, var(--sand) 100%);
-      color: var(--ink);
-      min-height: 100vh;\r\n      position: relative;
-    }\r\n\r\n    body::before {\r\n      content: "";\r\n      position: fixed;\r\n      inset: 0;\r\n      background: radial-gradient(circle at 12% 18%, rgba(179, 18, 26, 0.06), transparent 55%), radial-gradient(circle at 88% 82%, rgba(12, 15, 20, 0.06), transparent 55%);\r\n      pointer-events: none;\r\n      z-index: -1;\r\n    }
-
-    a { color: inherit; text-decoration: none; }
-
-    .topbar {
-      position: fixed;
-      inset: 0 0 auto 0;
-      height: 74px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 7vw 0 4vw;
-      background: rgba(12, 15, 20, 0.72);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      z-index: 10;
-    }
-
-    .topbar-logo img {
-      height: 64px;
-      width: auto;
-      filter: brightness(1.1);
-    }
-
-    .topbar-actions {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .topbar-actions a {
-      padding: 8px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      color: #fff;
-      font-size: 10px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      transition: all 0.25s ease;
-    }
-
-    .topbar-actions a:hover {
-      border-color: #fff;
-      color: #fff;
-    }
-
-    .page {
-      min-height: 100vh;\r\n      position: relative;
-      display: grid;
-      place-items: center;
-      padding: 120px 7vw 8vh;
-    }
-
-    .card {
-      width: min(460px, 92vw);
-      background: rgba(255, 255, 255, 0.88);\r\n      border-radius: 16px;\r\n      backdrop-filter: blur(10px);
-      padding: 28px 26px;
-      box-shadow: var(--shadow);
-      display: grid;
-      gap: 18px;
-    }
-
-    .card h1 {
-      font-family: "Playfair Display", serif;
-      font-size: clamp(22px, 2.6vw, 30px);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .card p {
-      color: var(--mist);
-      font-size: 14px;
-    }
-
-    .field {
-      display: grid;
-      gap: 8px;
-    }
-
-    label {
-      font-size: 11px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--ink-soft);
-    }
-
-    input {
-      border: 1px solid rgba(12, 15, 20, 0.2);
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 14px;
-    }
-
-    .password-wrap {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .password-wrap input {
-      width: 100%;
-      padding-right: 44px;
-    }
-
-    .toggle-visibility {
-      position: absolute;
-      right: 12px;
-      background: transparent;
-      border: none;
-      width: 28px;
-      height: 28px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      color: var(--ink-soft);
-    }
-
-    .toggle-visibility svg {
-      width: 18px;
-      height: 18px;
-    }
-
-    .actions {
-      display: grid;
-      gap: 12px;
-      margin-top: 8px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px 18px;
-      border-radius: 999px;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      font-size: 11px;
-      border: 1px solid var(--accent);
-      background: var(--accent);
-      color: #fff;
-      cursor: pointer;
-    }\r\n\r\n    .btn:hover {\r\n      transform: translateY(-1px);\r\n      box-shadow: 0 12px 25px rgba(12, 15, 20, 0.2);\r\n    }
-
-    .btn.secondary {
-      background: transparent;
-      color: var(--accent);
-    }\r\n\r\n    :focus-visible {\r\n      outline: 2px solid rgba(12, 15, 20, 0.75);\r\n      outline-offset: 2px;\r\n    }
-
-    .links {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--mist);
-    }
-
-    @media (max-width: 900px) {
-      .topbar-actions { display: none; }
-    }
-  </style>
+  <link rel="stylesheet" href="../assets/css/login.css" />
   <link rel="stylesheet" href="../assets/css/footer.css" />
 </head>
 <body>
@@ -207,7 +29,7 @@
   <main class="page">
     <section class="card">
       <h1>Connexion</h1>
-      <p>AccÃ©dez Ã  votre compte pour gÃ©rer vos favoris et votre panier.</p>
+      <p>Accédez à votre compte pour gérer vos favoris et votre panier.</p>
 
       <div class="field">
         <label for="email">Email</label>
@@ -217,7 +39,7 @@
       <div class="field">
         <label for="password">Mot de passe</label>
         <div class="password-wrap">
-          <input id="password" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" />
+          <input id="password" type="password" placeholder="••••••••" />
           <button class="toggle-visibility" type="button" id="togglePassword" aria-label="Afficher le mot de passe">
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M2 12s3.8-6 10-6 10 6 10 6-3.8 6-10 6-10-6-10-6Z" fill="none" stroke="currentColor" stroke-width="1.6"/>
@@ -228,34 +50,17 @@
       </div>
 
       <div class="links">
-        <a href="#">Mot de passe oubliÃ©</a>
-        <a href="register.html">CrÃ©er un compte</a>
+        <a href="#">Mot de passe oublié</a>
+        <a href="register.html">Créer un compte</a>
       </div>
 
       <div class="actions">
         <button class="btn" type="button">Se connecter</button>
-        <button class="btn secondary" type="button" id="guestContinue">Continuer en invitÃ©</button>
+        <button class="btn secondary" type="button" id="guestContinue">Continuer en invité</button>
       </div>
     </section>
   </main>
-  <script>
-    const passwordInput = document.getElementById("password");
-    const toggleBtn = document.getElementById("togglePassword");
-    toggleBtn.addEventListener("click", () => {
-      const isHidden = passwordInput.type === "password";
-      passwordInput.type = isHidden ? "text" : "password";
-      toggleBtn.setAttribute("aria-label", isHidden ? "Masquer le mot de passe" : "Afficher le mot de passe");
-    });
-
-    const guestBtn = document.getElementById("guestContinue");
-    guestBtn.addEventListener("click", () => {
-      if (document.referrer) {
-        window.location.href = document.referrer;
-      } else {
-        window.history.back();
-      }
-    });
-  </script>
+  <script src="../js/login.js"></script>
   <footer class="site-footer">
     <div class="footer-col">
       <strong>La Casa</strong>
@@ -272,9 +77,9 @@
       <a href="login.html">Compte</a>
     </div>
     <div class="footer-col">
-      <span>Livraison sÃ©curisÃ©e</span>
+      <span>Livraison sécurisée</span>
       <span>Service client</span>
-      <span>Essais privÃ©s</span>
+      <span>Essais privés</span>
     </div>
   </footer></body>
 </html>
