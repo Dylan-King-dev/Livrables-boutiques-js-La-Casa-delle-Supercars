@@ -1,5 +1,8 @@
+console.log('ENV PATH:', path.join(__dirname, '.env'));
+console.log('DB_PASS loaded:', process.env.DB_PASS);
 const mysql = require('mysql2/promise');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const db = mysql.createPool({
 	host: process.env.DB_HOST || 'localhost',

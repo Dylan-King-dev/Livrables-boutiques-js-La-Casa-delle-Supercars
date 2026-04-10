@@ -7,12 +7,22 @@ router.get('/', async (req, res) => {
 	try {
 		const { marque } = req.query;
 
+		let query = `
+			SELECT p.*, c.nom AS categorie_nom
+			FROM produits p
+			LEFT JOIN categories c ON p.categorie_id = c.id
+			WHERE 1=1
+		`;
+		let params = [];
+
 		if (marque) {
-			const [rows] = await db.query('SELECT * FROM produits WHERE marque = ? ORDER BY id DESC', [marque]);
-			return res.json(rows);
+			query += ' AND p.marque = ?';
+			params.push(marque);
 		}
 
-		const [rows] = await db.query('SELECT * FROM produits ORDER BY id DESC');
+		query += ' ORDER BY p.id DESC';
+
+		const [rows] = await db.query(query, params);
 		return res.json(rows);
 	} catch (error) {
 		return res.status(500).json({ message: 'Erreur serveur', error: error.message });
@@ -22,7 +32,12 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
 	try {
 		const { id } = req.params;
-		const [rows] = await db.query('SELECT * FROM produits WHERE id = ?', [id]);
+		const [rows] = await db.query(`
+			SELECT p.*, c.nom AS categorie_nom
+			FROM produits p
+			LEFT JOIN categories c ON p.categorie_id = c.id
+			WHERE p.id = ?
+		`, [id]);
 
 		if (rows.length === 0) {
 			return res.status(404).json({ message: 'Produit introuvable' });
