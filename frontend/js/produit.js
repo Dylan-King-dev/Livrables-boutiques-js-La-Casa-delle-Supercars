@@ -1,6 +1,120 @@
-﻿const params = new URLSearchParams(window.location.search);
+﻿console.log('Script produit.js loaded');
+
+const params = new URLSearchParams(window.location.search);
 const productId = params.get("id") || "porsche-gt3rs";
-const product = getProduct(productId);
+console.log('productId:', productId);
+
+function getImagePath(product) {
+    const modelName = product.ref.replace('Réf. ', '').replace('/', '_').toUpperCase();
+    const color = product.couleur_principale || 'Noir';
+    if (product.marque === 'Maserati') {
+        const colorUpper = color.toUpperCase();
+        return `../assets/img/maserati/${product.categorie_nom}/${modelName}/${modelName}_AVANT_${colorUpper}.jpg`;
+    } else if (product.marque === 'Porsche') {
+        const modelFolder = product.nom.replace(new RegExp(`^${product.marque}\\s+`, 'i'), '');
+        return `../assets/img/porsche/colours/${product.categorie_nom}/${modelFolder}/${color}.jpg`;
+    } else {
+        return '../assets/img/maserati/Maserati-index.png';
+    }
+}
+
+function getSwatchPath(apiProduct, color) {
+    const modelName = apiProduct.ref.replace('Réf. ', '').replace('/', '_').toUpperCase();
+    if (apiProduct.marque === 'Maserati') {
+        const swatchColor = color === 'Noir' ? 'NOIR' : color;
+        return `../assets/img/maserati/${apiProduct.categorie_nom}/${modelName}/icon/menu_icon_${swatchColor}.jpg`;
+    } else if (apiProduct.marque === 'Porsche') {
+        const modelFolder = apiProduct.nom.replace(new RegExp(`^${apiProduct.marque}\\s+`, 'i'), '');
+        return `../assets/img/porsche/colours/${apiProduct.categorie_nom}/${modelFolder}/${color}.jpg`;
+    } else {
+        return '../assets/img/maserati/Maserati-index.png';
+    }
+}
+
+function adaptProductFromAPI(apiProduct) {
+    const colors = [];
+    const primaryColor = apiProduct.couleur_principale || 'Noir';
+    const secondaryColor = apiProduct.couleur_secondaire;
+
+    // Primary color
+    const primaryImagePath = getImagePath({ ...apiProduct, couleur_principale: primaryColor });
+    colors.push({
+        key: primaryColor.toLowerCase(),
+        label: primaryColor,
+        swatch: getSwatchPath(apiProduct, primaryColor),
+        images: [
+            primaryImagePath,
+            primaryImagePath.replace('_AVANT_', '_COTER_'),
+            primaryImagePath.replace('_AVANT_', '_ARRIERE_')
+        ],
+    });
+
+    // Secondary color if exists
+    if (secondaryColor) {
+        const secondaryImagePath = getImagePath({ ...apiProduct, couleur_principale: secondaryColor });
+        colors.push({
+            key: secondaryColor.toLowerCase(),
+            label: secondaryColor,
+            swatch: getSwatchPath(apiProduct, secondaryColor),
+            images: [
+                secondaryImagePath,
+                secondaryImagePath.replace('_AVANT_', '_COTER_'),
+                secondaryImagePath.replace('_AVANT_', '_ARRIERE_')
+            ],
+        });
+    }
+
+    return {
+        id: apiProduct.id,
+        name: apiProduct.nom,
+        short: apiProduct.nom.replace(apiProduct.marque + ' ', ''),
+        brand: apiProduct.marque,
+        ref: apiProduct.ref,
+        badge: apiProduct.categorie_nom,
+        price: apiProduct.prix + ' €',
+        availability: apiProduct.stock > 0 ? 'Disponible' : 'Sur demande',
+        specs: {
+            power: 'N/A',
+            zeroTo100: 'N/A',
+            drive: 'N/A',
+            edition: 'N/A',
+        },
+        description: apiProduct.description,
+        image: primaryImagePath,
+        colors: colors,
+    };
+}
+
+let product;
+
+console.log('Is numeric:', /^\d+$/.test(productId));
+
+if (/^\d+$/.test(productId)) {
+    console.log('Fetching from API for id:', productId);
+    fetch(`http://localhost:3000/api/produits/${productId}`)
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) throw new Error('Product not found');
+            return response.json();
+        })
+        .then(apiProduct => {
+            console.log('API product:', apiProduct);
+            product = adaptProductFromAPI(apiProduct);
+            console.log('Adapted product:', product);
+            initializePage();
+        })
+        .catch(error => {
+            console.error('Error fetching product:', error);
+            product = getProduct("porsche-gt3rs");
+            initializePage();
+        });
+} else {
+    console.log('Using static product:', productId);
+    product = getProduct(productId);
+    initializePage();
+}
+
+function initializePage() {
 
 const track = document.getElementById("carouselTrack");
 const prevBtn = document.getElementById("prevSlide");
@@ -306,4 +420,5 @@ if (topbar) {
       topbar.classList.remove("is-hidden");
     }
   });
+}
 }
