@@ -1,18 +1,32 @@
-console.log('ENV PATH:', path.join(__dirname, '.env'));
-console.log('DB_PASS loaded:', process.env.DB_PASS);
 const mysql = require('mysql2/promise');
-const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '.env') });
+require('dotenv').config();
 
+// Création du pool de connexion MySQL
 const db = mysql.createPool({
 	host: process.env.DB_HOST || 'localhost',
 	user: process.env.DB_USER || 'root',
 	password: process.env.DB_PASS || '',
 	database: process.env.DB_NAME || 'boutique_auto',
+
 	waitForConnections: true,
-	connectionLimit: 1,
+	connectionLimit: 2,
 	queueLimit: 0,
-	charset: 'utf8mb4',
+
+	charset: 'utf8mb4'
 });
 
+// Test de connexion
+(async () => {
+	try {
+		// Test de connexion et libertion immédiate de la connexion
+		const connection = await db.getConnection();
+		console.log('✅ Connecté à MySQL = http://localhost:3000');
+		connection.release();
+	} catch (error) {
+		// En cas d'erreur de connexion, on affiche un message d'erreur dans la console
+		console.error('❌ Erreur connexion MySQL:', error.message);
+	}
+})();
+
 module.exports = db;
+
