@@ -3,21 +3,9 @@ const db = require('../db');
 
 const router = express.Router();
 
-function buildImagePath(product) {
-	const color = product.couleur_principale || 'Noir';
-
-	if (product.marque === 'Maserati') {
-		const modelName = product.ref.replace('Réf. ', '').replace('/', '_').toUpperCase();
-		const categoryName = product.categorie_nom === 'Electrique' ? 'Éléctrique' : product.categorie_nom;
-		return `../assets/img/maserati/${categoryName}/${modelName}/${modelName}_AVANT_${color.toUpperCase()}.jpg`;
-	}
-
-	if (product.marque === 'Porsche') {
-		const modelFolder = product.nom.replace(new RegExp(`^${product.marque}\\s+`, 'i'), '');
-		return `../assets/img/porsche/colours/${product.categorie_nom}/${modelFolder}/${color}.jpg`;
-	}
-
-	return '../assets/img/maserati/Maserati-index.png';
+function stripImage(product) {
+	const { image, ...rest } = product;
+	return rest;
 }
 
 router.get('/', async (req, res) => {
@@ -45,10 +33,7 @@ router.get('/', async (req, res) => {
 		query += ' ORDER BY p.id DESC';
 
 		const [rows] = await db.query(query, params);
-		return res.json(rows.map((product) => ({
-			...product,
-			image: buildImagePath(product),
-		})));
+		return res.json(rows.map(stripImage));
 	} catch (error) {
 		return res.status(500).json({ message: 'Erreur serveur', error: error.message });
 	}
@@ -68,10 +53,7 @@ router.get('/:id', async (req, res) => {
 			return res.status(404).json({ message: 'Produit introuvable' });
 		}
 
-		return res.json({
-			...rows[0],
-			image: buildImagePath(rows[0]),
-		});
+		return res.json(stripImage(rows[0]));
 	} catch (error) {
 		return res.status(500).json({ message: 'Erreur serveur', error: error.message });
 	}
@@ -117,7 +99,7 @@ router.post('/', async (req, res) => {
 		);
 
 		const [rows] = await db.query('SELECT * FROM produits WHERE id = ?', [result.insertId]);
-		return res.status(201).json(rows[0]);
+		return res.status(201).json(stripImage(rows[0]));
 	} catch (error) {
 		return res.status(500).json({ message: 'Erreur serveur', error: error.message });
 	}
