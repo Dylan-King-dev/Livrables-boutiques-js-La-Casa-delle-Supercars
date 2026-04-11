@@ -49,6 +49,9 @@ if (submitBtn) {
         return;
       }
 
+      // Store user data in localStorage
+      localStorage.setItem('lacasa_user', JSON.stringify(data.utilisateur));
+
       alert("Connexion réussie !");
       window.location.href = "index.html";
 

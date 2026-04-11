@@ -68,6 +68,19 @@
   line-height: 1.6;
 }
 
+.user-info {
+  text-align: center;
+}
+
+.user-info p {
+  margin: 4px 0;
+}
+
+.user-info p:first-child {
+  font-weight: bold;
+  color: #1b2330;
+}
+
 .drawer-actions {
   display: grid;
   gap: 10px;
@@ -90,6 +103,27 @@
 .drawer-actions a.primary {
   background: #1b2330;
   color: #fff;
+}
+
+.logout-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 18px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 11px;
+  border: 1px solid #dc3545;
+  background: #dc3545;
+  color: #fff;
+  cursor: pointer;
+  width: 100%;
+}
+
+.logout-btn:hover {
+  background: #c82333;
+  border-color: #c82333;
 }
 
 body.drawer-open {

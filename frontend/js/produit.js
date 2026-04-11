@@ -1,5 +1,49 @@
 ﻿console.log('Script produit.js loaded');
 
+// Storage Keys
+const STORAGE_KEYS = {
+  cart: 'lacasa_cart',
+  favs: 'lacasa_favs'
+};
+
+// Storage utility functions
+const getList = (key) => {
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : [];
+  } catch (e) {
+    console.error('Error reading from localStorage:', e);
+    return [];
+  }
+};
+
+const addItem = (key, item) => {
+  try {
+    const list = getList(key);
+    if (!list.includes(item)) {
+      list.push(item);
+      localStorage.setItem(key, JSON.stringify(list));
+    }
+  } catch (e) {
+    console.error('Error writing to localStorage:', e);
+  }
+};
+
+const toggleItem = (key, item) => {
+  try {
+    const list = getList(key);
+    const index = list.indexOf(item);
+    if (index > -1) {
+      list.splice(index, 1);
+    } else {
+      list.push(item);
+    }
+    localStorage.setItem(key, JSON.stringify(list));
+  } catch (e) {
+    console.error('Error toggling item in localStorage:', e);
+  }
+};
+
 const params = new URLSearchParams(window.location.search);
 const productId = params.get("id") || "porsche-gt3rs";
 console.log('productId:', productId);
@@ -87,6 +131,34 @@ function adaptProductFromAPI(apiProduct) {
 
 let product;
 
+// Fallback function for static products (not from API)
+const getProduct = (id) => {
+  console.log('Using placeholder product for id:', id);
+  return {
+    id: 1,
+    name: 'Produit',
+    short: 'Produit',
+    brand: 'Marque',
+    ref: 'REF-001',
+    badge: 'Standard',
+    price: 'Sur devis',
+    availability: 'Disponible',
+    specs: {
+      power: 'N/A',
+      zeroTo100: 'N/A',
+      drive: 'N/A',
+      edition: 'N/A',
+    },
+    description: 'Description du produit',
+    image: '../assets/img/maserati/Maserati-index.png',
+    colors: [{
+      key: 'default',
+      label: 'Standard',
+      images: ['../assets/img/maserati/Maserati-index.png', '../assets/img/maserati/Maserati-index.png', '../assets/img/maserati/Maserati-index.png']
+    }]
+  };
+};
+
 console.log('Is numeric:', /^\d+$/.test(productId));
 
 if (/^\d+$/.test(productId)) {
@@ -146,7 +218,15 @@ const viewerNext = document.getElementById("viewerNext");
 const viewerIndicators = document.getElementById("viewerIndicators");
 const topbar = document.querySelector(".topbar");
 
-let index = 0;
+console.log('Viewer elements found:', {
+  imageViewer: !!imageViewer,
+  viewerImg: !!viewerImg,
+  viewerCaption: !!viewerCaption,
+  viewerIndicators: !!viewerIndicators,
+  viewerClose: !!viewerClose,
+  viewerPrev: !!viewerPrev,
+  viewerNext: !!viewerNext
+});
 let touchStartX = 0;
 let touchDeltaX = 0;
 let viewerIndex = 0;
@@ -171,7 +251,11 @@ const updateViewer = (nextIndex) => {
 
 // Ouvre l'aperçu plein écran de l'image sélectionnée.
 const openViewer = (images, startIndex) => {
-  if (!imageViewer || !viewerImg) return;
+  console.log('Opening viewer with images:', images, 'startIndex:', startIndex);
+  if (!imageViewer || !viewerImg) {
+    console.error('Viewer elements not found!');
+    return;
+  }
   viewerImages = images.slice();
   viewerIndex = startIndex || 0;
   const alt = viewerImg.alt || "";
@@ -182,7 +266,11 @@ const openViewer = (images, startIndex) => {
       btn.type = "button";
       btn.setAttribute("aria-label", `Aller à l'image ${i + 1}`);
       if (i === viewerIndex) btn.classList.add("active");
-      btn.addEventListener("click", () => updateViewer(i));
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        updateViewer(i);
+      });
       viewerIndicators.appendChild(btn);
     });
   }
@@ -191,17 +279,23 @@ const openViewer = (images, startIndex) => {
   imageViewer.classList.add("open");
   imageViewer.setAttribute("aria-hidden", "false");
   document.body.classList.add("viewer-open");
+  console.log('Viewer opened successfully');
 };
 
 // Ferme l'aperçu plein écran.
 const closeViewer = () => {
-  if (!imageViewer || !viewerImg) return;
+  console.log('Closing viewer');
+  if (!imageViewer || !viewerImg) {
+    console.error('Viewer elements not found!');
+    return;
+  }
   imageViewer.classList.remove("open");
   imageViewer.setAttribute("aria-hidden", "true");
   document.body.classList.remove("viewer-open");
   viewerImg.src = "";
   if (viewerCaption) viewerCaption.textContent = "";
   viewerImages = [];
+  console.log('Viewer closed successfully');
 };
 
 // Met a jour la position du carrousel et l'indicateur actif.
@@ -386,14 +480,51 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeViewer();
 });
 
-if (viewerClose) viewerClose.addEventListener("click", closeViewer);
-if (viewerPrev) viewerPrev.addEventListener("click", () => updateViewer(viewerIndex - 1));
-if (viewerNext) viewerNext.addEventListener("click", () => updateViewer(viewerIndex + 1));
-if (imageViewer) {
-  imageViewer.addEventListener("click", (e) => {
-    if (e.target === imageViewer || e.target === viewerImg) closeViewer();
-  });
-}
+// Attache les écouteurs d'événements pour le viewer plein écran
+const attachViewerListeners = () => {
+  console.log('Attaching viewer listeners...');
+
+  if (viewerClose) {
+    viewerClose.addEventListener("click", (e) => {
+      console.log('Close button clicked');
+      e.preventDefault();
+      e.stopPropagation();
+      closeViewer();
+    });
+    console.log('Close button listener attached');
+  }
+
+  if (viewerPrev) {
+    viewerPrev.addEventListener("click", (e) => {
+      console.log('Prev button clicked');
+      e.preventDefault();
+      e.stopPropagation();
+      updateViewer(viewerIndex - 1);
+    });
+    console.log('Prev button listener attached');
+  }
+
+  if (viewerNext) {
+    viewerNext.addEventListener("click", (e) => {
+      console.log('Next button clicked');
+      e.preventDefault();
+      e.stopPropagation();
+      updateViewer(viewerIndex + 1);
+    });
+    console.log('Next button listener attached');
+  }
+
+  if (imageViewer) {
+    imageViewer.addEventListener("click", (e) => {
+      console.log('Viewer background clicked, target:', e.target.id || e.target.class);
+      // Only close if clicking on the viewer background or image itself, not on buttons
+      if (e.target === imageViewer || e.target === viewerImg) {
+        closeViewer();
+      }
+    });
+    console.log('Viewer background listener attached');
+  }
+};
 
 track.addEventListener("touchstart", (e) => {
   touchStartX = e.touches[0].clientX;
@@ -421,4 +552,8 @@ if (topbar) {
     }
   });
 }
+
+// Attach viewer listeners NOW that everything is initialized
+console.log('About to attach viewer listeners from initializePage');
+attachViewerListeners();
 }

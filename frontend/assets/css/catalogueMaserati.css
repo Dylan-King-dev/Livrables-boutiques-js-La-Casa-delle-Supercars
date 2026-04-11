@@ -293,11 +293,93 @@ a {
   padding: 8vh 7vw;
 }
 
-.filter-bar {
+.controls-bar {
   display: flex;
   align-items: center;
   gap: 16px;
   margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 250px;
+  border: 1px solid rgba(12, 15, 20, 0.2);
+  border-radius: 999px;
+  padding: 8px 16px;
+  background: #fff;
+}
+
+.search-form input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-family: inherit;
+  background: transparent;
+  color: var(--ink);
+}
+
+.search-form input::placeholder {
+  color: rgba(12, 15, 20, 0.5);
+}
+
+.search-form button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  opacity: 0.7;
+  transition: opacity 0.25s ease;
+}
+
+.search-form button:hover {
+  opacity: 1;
+}
+
+.sort-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(12, 15, 20, 0.2);
+  background: #fff;
+}
+
+.sort-dropdown label {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(12, 15, 20, 0.7);
+  white-space: nowrap;
+}
+
+.sort-dropdown select {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--ink);
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.sort-dropdown select option {
+  background: #fff;
+  color: var(--ink);
+}
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   position: relative;
 }
 

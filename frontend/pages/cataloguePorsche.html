@@ -52,15 +52,29 @@
           <h2>Toute la collection</h2>
           <p>Sélectionnez un type pour filtrer les modèles.</p>
         </div>
-        <div class="filter-bar">
-          <button class="filter-toggle" id="filterToggle" type="button" aria-expanded="false">All</button>
-          <div class="filter-panel" id="filterPanel" aria-hidden="true">
-            <button class="filter-option active" type="button" data-filter="all">All</button>
-            <button class="filter-option" type="button" data-filter="Sport">Sport</button>
-            <button class="filter-option" type="button" data-filter="Super Sport">Super Sport</button>
-            <button class="filter-option" type="button" data-filter="Classic">Classic</button>
-            <button class="filter-option" type="button" data-filter="SUV">SUV</button>
-            <button class="filter-option" type="button" data-filter="E-Performance">E-Performance</button>
+        <div class="controls-bar">
+          <form class="search-form" id="catalogueSearch">
+            <input type="search" id="catalogueSearchInput" placeholder="Rechercher un modèle..." />
+            <button type="submit" aria-label="Rechercher">🔍</button>
+          </form>
+          <div class="sort-dropdown">
+            <label for="sortSelect">Trier par:</label>
+            <select id="sortSelect">
+              <option value="alphabetical">Alphabétique (A-Z)</option>
+              <option value="price-asc">Prix (croissant)</option>
+              <option value="price-desc">Prix (décroissant)</option>
+            </select>
+          </div>
+          <div class="filter-bar">
+            <button class="filter-toggle" id="filterToggle" type="button" aria-expanded="false">All</button>
+            <div class="filter-panel" id="filterPanel" aria-hidden="true">
+              <button class="filter-option active" type="button" data-filter="all">All</button>
+              <button class="filter-option" type="button" data-filter="Sport">Sport</button>
+              <button class="filter-option" type="button" data-filter="Super Sport">Super Sport</button>
+              <button class="filter-option" type="button" data-filter="Classic">Classic</button>
+              <button class="filter-option" type="button" data-filter="SUV">SUV</button>
+              <button class="filter-option" type="button" data-filter="E-Performance">E-Performance</button>
+            </div>
           </div>
         </div>
       </div>
