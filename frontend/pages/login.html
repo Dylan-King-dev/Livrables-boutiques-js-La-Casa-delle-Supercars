@@ -33,14 +33,19 @@
 
       <div class="field">
         <label for="email">Email</label>
-        <input id="email" type="email" placeholder="nom@exemple.com" />
+        <input id="email" name="email" type="email" placeholder="nom@exemple.com" />
       </div>
 
       <div class="field">
         <label for="password">Mot de passe</label>
         <div class="password-wrap">
-          <input id="password" type="password" placeholder="Mot de passe" />
-          <button class="toggle-visibility" type="button" id="togglePassword" aria-label="Afficher le mot de passe">
+          <input id="password" name="password" type="password" placeholder="Mot de passe" />
+          <button
+            class="toggle-visibility"
+            type="button"
+            id="togglePassword"
+            aria-label="Afficher le mot de passe"
+          >
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M2 12s3.8-6 10-6 10 6 10 6-3.8 6-10 6-10-6-10-6Z" fill="none" stroke="currentColor" stroke-width="1.6"/>
               <circle cx="12" cy="12" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
@@ -55,12 +60,14 @@
       </div>
 
       <div class="actions">
-        <button class="btn" type="button">Se connecter</button>
+        <button class="btn" type="button" id="loginBtn">Se connecter</button>
         <button class="btn secondary" type="button" id="guestContinue">Continuer en tant qu'invité</button>
       </div>
     </section>
   </main>
+
   <script src="../js/login.js"></script>
+
   <footer class="site-footer">
     <div class="footer-col">
       <strong>La Casa</strong>
@@ -81,8 +88,8 @@
       <span>Service client</span>
       <span>Essais privés</span>
     </div>
-  </footer></body>
+  </footer>
+</body>
 </html>
-
 
 
