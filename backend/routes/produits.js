@@ -3,11 +3,6 @@ const db = require('../db');
 
 const router = express.Router();
 
-function stripImage(product) {
-	const { image, ...rest } = product;
-	return rest;
-}
-
 router.get('/', async (req, res) => {
 	try {
 		const { marque, search } = req.query;
@@ -33,7 +28,7 @@ router.get('/', async (req, res) => {
 		query += ' ORDER BY p.id DESC';
 
 		const [rows] = await db.query(query, params);
-		return res.json(rows.map(stripImage));
+		return res.json(rows);
 	} catch (error) {
 		return res.status(500).json({ message: 'Erreur serveur', error: error.message });
 	}
@@ -53,7 +48,7 @@ router.get('/:id', async (req, res) => {
 			return res.status(404).json({ message: 'Produit introuvable' });
 		}
 
-		return res.json(stripImage(rows[0]));
+		return res.json(rows[0]);
 	} catch (error) {
 		return res.status(500).json({ message: 'Erreur serveur', error: error.message });
 	}
@@ -99,7 +94,7 @@ router.post('/', async (req, res) => {
 		);
 
 		const [rows] = await db.query('SELECT * FROM produits WHERE id = ?', [result.insertId]);
-		return res.status(201).json(stripImage(rows[0]));
+		return res.status(201).json(rows[0]);
 	} catch (error) {
 		return res.status(500).json({ message: 'Erreur serveur', error: error.message });
 	}

@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.3
+-- version 5.1.2
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Apr 10, 2026 at 10:35 AM
--- Server version: 5.7.24
--- PHP Version: 8.3.1
+-- Hôte : localhost:3306
+-- Généré le : sam. 11 avr. 2026 à 22:57
+-- Version du serveur : 5.7.24
+-- Version de PHP : 8.3.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,197 +18,89 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `boutique_auto`
+-- Base de données : `boutique_auto`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `categories`
---
-
-CREATE TABLE `categories` (
-  `id` int(11) NOT NULL,
-  `nom` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `categories`
---
-
-INSERT INTO `categories` (`id`, `nom`) VALUES
-(5, 'Classic'),
-(4, 'Electrique'),
-(1, 'Sport'),
-(2, 'Super Sport'),
-(3, 'SUV');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `commandes`
---
-
-CREATE TABLE `commandes` (
-  `id` int(11) NOT NULL,
-  `total` decimal(10,2) NOT NULL,
-  `adresse_livraison` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `user_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `commande_items`
---
-
-CREATE TABLE `commande_items` (
-  `id` int(11) NOT NULL,
-  `commande_id` int(11) NOT NULL,
-  `produit_id` int(11) NOT NULL,
-  `quantite` int(11) NOT NULL,
-  `prix_unitaire` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `produits`
+-- Structure de la table `produits`
 --
 
 CREATE TABLE `produits` (
   `id` int(11) NOT NULL,
-  `ref` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nom` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `prix` decimal(10,2) NOT NULL,
+  `ref` varchar(50) NOT NULL,
+  `nom` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `prix` decimal(15,2) DEFAULT NULL,
   `reduction` int(11) NOT NULL DEFAULT '0',
   `stock` int(11) NOT NULL DEFAULT '0',
-  `marque` enum('Maserati','Porsche') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `couleur_principale` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `couleur_secondaire` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `marque` varchar(100) NOT NULL,
+  `puissance` int(11) NOT NULL,
+  `annee` int(11) NOT NULL,
+  `zero_a_cent` decimal(5,2) NOT NULL,
+  `couleur_principale` varchar(50) DEFAULT NULL,
+  `couleur_secondaire` varchar(50) DEFAULT NULL,
   `categorie_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `produits`
+-- Déchargement des données de la table `produits`
 --
 
-INSERT INTO `produits` (`id`, `ref`, `nom`, `description`, `prix`, `reduction`, `stock`, `marque`, `couleur_principale`, `couleur_secondaire`, `categorie_id`) VALUES
-(1, 'Réf. GRAN/TURISMO', 'Maserati GranTurismo', 'Maserati — série limitée, préparée sur mesure.', 168000.00, 10, 5, 'Maserati', 'Noir', 'Bleu', 1);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `utilisateurs`
---
-
-CREATE TABLE `utilisateurs` (
-  `id` int(11) NOT NULL,
-  `nom` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `prenom` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(190) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `mot_de_passe` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `role` enum('client','admin') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'client'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `categories`
---
-ALTER TABLE `categories`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `nom` (`nom`);
+INSERT INTO `produits` (`id`, `ref`, `nom`, `description`, `prix`, `reduction`, `stock`, `marque`, `puissance`, `annee`, `zero_a_cent`, `couleur_principale`, `couleur_secondaire`, `categorie_id`) VALUES
+(1, 'MAS-GTF-001', 'Granturismo Folgore', 'Coupé électrique haut de gamme très performant.', '195000.00', 5, 2, 'Maserati', 761, 2024, '2.70', 'Noir', 'Rouge', 5),
+(2, 'MAS-GRF-001', 'Grecale Folgore', 'SUV électrique luxueux et moderne.', '125000.00', 0, 3, 'Maserati', 500, 2024, '4.10', 'Noir', 'Vert Fluo', 5),
+(3, 'MAS-GT-001', 'Gran Turismo', 'Coupé sportif iconique au design élégant.', '160000.00', 10, 2, 'Maserati', 550, 2023, '3.50', 'Noir', 'Bleu', 1),
+(4, 'MAS-TRO-001', 'Trofeo', 'Version ultra performante avec moteur puissant.', '180000.00', 5, 1, 'Maserati', 580, 2023, '3.20', 'Noir', 'Orange', 1),
+(5, 'MAS-GC-001', 'Grancabrio', 'Cabriolet sportif pour conduite plaisir.', '170000.00', 8, 2, 'Maserati', 540, 2023, '3.80', 'Noir', 'Or', 3),
+(6, 'MAS-GCT-001', 'Grancabrio Trofeo', 'Version cabriolet haute performance.', '190000.00', 3, 1, 'Maserati', 580, 2024, '3.40', 'Noir', 'Gris', 3),
+(7, 'MAS-GT2-001', 'GT2 Stradale', 'Voiture extrême inspirée de la compétition.', '220000.00', 0, 1, 'Maserati', 640, 2024, '2.80', 'Noir', 'Jaune', 2),
+(8, 'MAS-MCP-001', 'MCPura', 'Supercar légère et ultra performante.', '250000.00', 0, 1, 'Maserati', 630, 2024, '2.90', 'Noir', 'Blanc', 2),
+(9, 'MAS-GRE-001', 'Grecale', 'SUV compact sportif et confortable.', '95000.00', 12, 4, 'Maserati', 300, 2023, '5.60', 'Noir', 'Violet', 4),
+(10, 'MAS-GRM-001', 'Grecale Modena', 'Version améliorée avec plus de puissance.', '105000.00', 7, 3, 'Maserati', 330, 2023, '5.30', 'Noir', 'Emeraude', 4),
+(11, 'POR-718SRS-001', '718 Spyder RS', 'Roadster sportif radical avec excellente tenue de route.', '185000.00', 4, 2, 'Porsche', 500, 2024, '3.40', 'Argent', 'Jaune', 1),
+(12, 'POR-911CRS-001', '911 Carrera RS', 'Coupé emblématique au caractère sportif affirmé.', '165000.00', 6, 2, 'Porsche', 450, 2023, '3.70', 'Argent', 'Rouge', 1),
+(13, 'POR-PAN-001', 'Panamera', 'Berline de luxe alliant confort et performance.', '122000.00', 8, 3, 'Porsche', 353, 2023, '5.10', 'Blanc', 'Bleu', 5),
+(14, 'POR-CEH-001', 'Cayenne E-Hybrid', 'SUV hybride rechargeable puissant et polyvalent.', '108000.00', 5, 4, 'Porsche', 470, 2024, '4.90', 'Blanc', 'Marron', 3),
+(15, 'POR-CE-001', 'Cayenne Electric', 'SUV électrique moderne avec grande autonomie.', '118000.00', 3, 3, 'Porsche', 408, 2025, '4.70', 'Gris', 'Vert', 4),
+(16, 'POR-MAC-001', 'Macan', 'SUV compact dynamique pour un usage quotidien premium.', '78000.00', 10, 5, 'Porsche', 265, 2023, '6.20', 'Blanc', 'Orange', 3),
+(17, 'POR-TTG-001', 'Taycan Turbo GT', 'Berline électrique ultra performante et technologique.', '210000.00', 2, 1, 'Porsche', 789, 2024, '2.30', 'Blanc', 'Bleu Metal', 4),
+(18, 'POR-718CGT4RS-001', '718 Cayman GT4 RS', 'Coupé léger et radical orienté circuit.', '195000.00', 0, 2, 'Porsche', 500, 2024, '3.20', 'Argent', 'Bleu', 2),
+(19, 'POR-911GT3-001', '911 GT3', 'Version extrême de la 911 conçue pour la performance.', '225000.00', 0, 1, 'Porsche', 510, 2024, '3.10', 'Argent', 'Jaune', 2),
+(20, 'POR-911TS-001', '911 Turbo S', 'Supercar polyvalente avec accélérations impressionnantes.', '245000.00', 1, 1, 'Porsche', 650, 2024, '2.70', 'Argent', 'Noir', 2);
 
 --
--- Indexes for table `commandes`
+-- Index pour les tables déchargées
 --
-ALTER TABLE `commandes`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_commandes_user` (`user_id`);
 
 --
--- Indexes for table `commande_items`
---
-ALTER TABLE `commande_items`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_commande_items_commandes` (`commande_id`),
-  ADD KEY `fk_commande_items_produits` (`produit_id`);
-
---
--- Indexes for table `produits`
+-- Index pour la table `produits`
 --
 ALTER TABLE `produits`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `ref` (`ref`),
-  ADD KEY `fk_produits_categories` (`categorie_id`);
+  ADD KEY `categorie_id` (`categorie_id`);
 
 --
--- Indexes for table `utilisateurs`
---
-ALTER TABLE `utilisateurs`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`);
-
---
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT pour les tables déchargées
 --
 
 --
--- AUTO_INCREMENT for table `categories`
---
-ALTER TABLE `categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- AUTO_INCREMENT for table `commandes`
---
-ALTER TABLE `commandes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `commande_items`
---
-ALTER TABLE `commande_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `produits`
+-- AUTO_INCREMENT pour la table `produits`
 --
 ALTER TABLE `produits`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
--- AUTO_INCREMENT for table `utilisateurs`
---
-ALTER TABLE `utilisateurs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- Constraints for dumped tables
+-- Contraintes pour les tables déchargées
 --
 
 --
--- Constraints for table `commandes`
---
-ALTER TABLE `commandes`
-  ADD CONSTRAINT `fk_commandes_user` FOREIGN KEY (`user_id`) REFERENCES `utilisateurs` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
---
--- Constraints for table `commande_items`
---
-ALTER TABLE `commande_items`
-  ADD CONSTRAINT `fk_commande_items_commandes` FOREIGN KEY (`commande_id`) REFERENCES `commandes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_commande_items_produits` FOREIGN KEY (`produit_id`) REFERENCES `produits` (`id`) ON UPDATE CASCADE;
-
---
--- Constraints for table `produits`
+-- Contraintes pour la table `produits`
 --
 ALTER TABLE `produits`
-  ADD CONSTRAINT `fk_produits_categories` FOREIGN KEY (`categorie_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `produits_ibfk_1` FOREIGN KEY (`categorie_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
