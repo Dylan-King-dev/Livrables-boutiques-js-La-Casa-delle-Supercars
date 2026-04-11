@@ -75,7 +75,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Récupérer tous les utilisateurs est les affiche dans la console du serveur (pour les tests) quand je cherche parceque jai pas de tete 
+// Récupérer tous les utilisateurs est les affiche dans la console du serveur (test) quand je cherche parceque jai pas de tete 
 router.get('/', async (req, res) => {
   try {
     const [users] = await db.query('SELECT id, nom, prenom, email, role FROM utilisateurs');
