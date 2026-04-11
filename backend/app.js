@@ -3,11 +3,11 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const db = require('./db');
-
+// import des route page du site
 const produitsRoutes = require('./routes/produits');
 const registerRoutes = require('./routes/back_register');
 const loginRoutes = require('./routes/back_login');
-
+// on creer le port ou on veux envoyer les requete :)
 const app = express();
 const port = process.env.PORT || 3000;
 

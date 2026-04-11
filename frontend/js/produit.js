@@ -49,6 +49,9 @@ const productId = params.get("id") || "porsche-gt3rs";
 console.log('productId:', productId);
 
 function getImagePath(product) {
+  if (product.image) {
+    return product.image;
+  }
     const modelName = product.ref.replace('Réf. ', '').replace('/', '_').toUpperCase();
     const color = product.couleur_principale || 'Noir';
     if (product.marque === 'Maserati') {

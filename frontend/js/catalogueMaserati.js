@@ -18,21 +18,8 @@ function createCard(product) {
     card.className = 'card';
     card.setAttribute('data-category', product.categorie_nom || 'Unknown');
 
-    // Assume image path based on marque, categorie_nom, nom
-    const modelName = product.ref.replace('Réf. ', '').replace('/', '_').toUpperCase();
-    const modelFolder = product.nom.replace(new RegExp(`^${product.marque}\\s+`, 'i'), '');
-    const color = product.couleur_principale || 'Noir';
-    let imagePath;
-    if (product.marque === 'Maserati') {
-        const colorUpper = color.toUpperCase();
-        imagePath = `../assets/img/maserati/${product.categorie_nom}/${modelName}/${modelName}_AVANT_${colorUpper}.jpg`;
-    } else if (product.marque === 'Porsche') {
-        imagePath = `../assets/img/porsche/colours/${product.categorie_nom}/${modelFolder}/${color}.jpg`;
-    } else {
-        imagePath = '../assets/img/maserati/Maserati-index.png';
-    }
-    // Fallback to a default image if not found
-    const fallbackImage = '../assets/img/maserati/Maserati-index.png'; // or some placeholder
+    const imagePath = product.image || '../assets/img/maserati/Maserati-index.png';
+    const fallbackImage = '../assets/img/maserati/Maserati-index.png';
 
     card.innerHTML = `
         <a href="produit.html?id=${product.id}" class="card-link" aria-label="Voir le produit ${product.nom}">
