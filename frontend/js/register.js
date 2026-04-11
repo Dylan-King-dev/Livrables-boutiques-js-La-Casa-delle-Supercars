@@ -1,3 +1,5 @@
+const button = document.querySelector('.btn');
+
 // Bouton "continuer en invité"
 const guestBtn = document.getElementById("guestContinue");
 if (guestBtn) {
@@ -53,12 +55,12 @@ if (submitBtn) {
         return;
       }
 
-      alert("Compte créé avec succès !");
-      window.location.href = "login.html";
-
+      // redirige vers la connexion
+      window.location.href = 'login.html';
+      // affiche si il y a une erreur
     } catch (error) {
       console.error(error);
-      alert("Erreur serveur");
+      alert('Erreur serveur');
     }
   });
 }

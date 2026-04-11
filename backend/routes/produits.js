@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
 	try {
-		const { marque } = req.query;
+		const { marque, search } = req.query;
 
 		let query = `
 			SELECT p.*, c.nom AS categorie_nom
@@ -18,6 +18,11 @@ router.get('/', async (req, res) => {
 		if (marque) {
 			query += ' AND p.marque = ?';
 			params.push(marque);
+		}
+
+		if (search) {
+			query += ' AND (p.nom LIKE ? OR p.description LIKE ?)';
+			params.push(`%${search}%`, `%${search}%`);
 		}
 
 		query += ' ORDER BY p.id DESC';
@@ -90,6 +95,34 @@ router.post('/', async (req, res) => {
 
 		const [rows] = await db.query('SELECT * FROM produits WHERE id = ?', [result.insertId]);
 		return res.status(201).json(rows[0]);
+	} catch (error) {
+		return res.status(500).json({ message: 'Erreur serveur', error: error.message });
+	}
+});
+
+// Search endpoint for autocomplete suggestions
+router.get('/search/suggestions', async (req, res) => {
+	try {
+		const { q } = req.query;
+
+		if (!q || q.length < 2) {
+			return res.json([]);
+		}
+
+		const [rows] = await db.query(`
+			SELECT p.id, p.nom, p.marque, p.prix, p.reduction
+			FROM produits p
+			WHERE p.nom LIKE ? OR p.description LIKE ?
+			ORDER BY 
+				CASE 
+					WHEN p.nom LIKE ? THEN 1
+					ELSE 2
+				END,
+				p.nom
+			LIMIT 8
+		`, [`%${q}%`, `%${q}%`, `${q}%`]);
+
+		return res.json(rows);
 	} catch (error) {
 		return res.status(500).json({ message: 'Erreur serveur', error: error.message });
 	}

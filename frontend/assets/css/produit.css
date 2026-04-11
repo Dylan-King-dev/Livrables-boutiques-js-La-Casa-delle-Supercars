@@ -8,3 +8,25 @@
      .bookmark:hover{
           cursor: pointer;
      }
+
+     /* Fix viewer button positioning and z-index */
+     .viewer-arrow,
+     .viewer-close,
+     .viewer-indicators {
+       z-index: 3 !important;
+       pointer-events: auto !important;
+     }
+
+     .viewer-arrow.left {
+       left: 20px !important;
+     }
+
+     .viewer-arrow.right {
+       right: 20px !important;
+     }
+
+     .viewer-arrow:hover,
+     .viewer-close:hover,
+     .viewer-indicators button:hover {
+       opacity: 1 !important;
+     }

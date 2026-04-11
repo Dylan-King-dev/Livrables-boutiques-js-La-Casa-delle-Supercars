@@ -1,6 +1,192 @@
-﻿const params = new URLSearchParams(window.location.search);
+﻿console.log('Script produit.js loaded');
+
+// Storage Keys
+const STORAGE_KEYS = {
+  cart: 'lacasa_cart',
+  favs: 'lacasa_favs'
+};
+
+// Storage utility functions
+const getList = (key) => {
+  try {
+    const stored = localStorage.getItem(key);
+    return stored ? JSON.parse(stored) : [];
+  } catch (e) {
+    console.error('Error reading from localStorage:', e);
+    return [];
+  }
+};
+
+const addItem = (key, item) => {
+  try {
+    const list = getList(key);
+    if (!list.includes(item)) {
+      list.push(item);
+      localStorage.setItem(key, JSON.stringify(list));
+    }
+  } catch (e) {
+    console.error('Error writing to localStorage:', e);
+  }
+};
+
+const toggleItem = (key, item) => {
+  try {
+    const list = getList(key);
+    const index = list.indexOf(item);
+    if (index > -1) {
+      list.splice(index, 1);
+    } else {
+      list.push(item);
+    }
+    localStorage.setItem(key, JSON.stringify(list));
+  } catch (e) {
+    console.error('Error toggling item in localStorage:', e);
+  }
+};
+
+const params = new URLSearchParams(window.location.search);
 const productId = params.get("id") || "porsche-gt3rs";
-const product = getProduct(productId);
+console.log('productId:', productId);
+
+function getImagePath(product) {
+    const modelName = product.ref.replace('Réf. ', '').replace('/', '_').toUpperCase();
+    const color = product.couleur_principale || 'Noir';
+    if (product.marque === 'Maserati') {
+        const colorUpper = color.toUpperCase();
+        return `../assets/img/maserati/${product.categorie_nom}/${modelName}/${modelName}_AVANT_${colorUpper}.jpg`;
+    } else if (product.marque === 'Porsche') {
+        const modelFolder = product.nom.replace(new RegExp(`^${product.marque}\\s+`, 'i'), '');
+        return `../assets/img/porsche/colours/${product.categorie_nom}/${modelFolder}/${color}.jpg`;
+    } else {
+        return '../assets/img/maserati/Maserati-index.png';
+    }
+}
+
+function getSwatchPath(apiProduct, color) {
+    const modelName = apiProduct.ref.replace('Réf. ', '').replace('/', '_').toUpperCase();
+    if (apiProduct.marque === 'Maserati') {
+        const swatchColor = color === 'Noir' ? 'NOIR' : color;
+        return `../assets/img/maserati/${apiProduct.categorie_nom}/${modelName}/icon/menu_icon_${swatchColor}.jpg`;
+    } else if (apiProduct.marque === 'Porsche') {
+        const modelFolder = apiProduct.nom.replace(new RegExp(`^${apiProduct.marque}\\s+`, 'i'), '');
+        return `../assets/img/porsche/colours/${apiProduct.categorie_nom}/${modelFolder}/${color}.jpg`;
+    } else {
+        return '../assets/img/maserati/Maserati-index.png';
+    }
+}
+
+function adaptProductFromAPI(apiProduct) {
+    const colors = [];
+    const primaryColor = apiProduct.couleur_principale || 'Noir';
+    const secondaryColor = apiProduct.couleur_secondaire;
+
+    // Primary color
+    const primaryImagePath = getImagePath({ ...apiProduct, couleur_principale: primaryColor });
+    colors.push({
+        key: primaryColor.toLowerCase(),
+        label: primaryColor,
+        swatch: getSwatchPath(apiProduct, primaryColor),
+        images: [
+            primaryImagePath,
+            primaryImagePath.replace('_AVANT_', '_COTER_'),
+            primaryImagePath.replace('_AVANT_', '_ARRIERE_')
+        ],
+    });
+
+    // Secondary color if exists
+    if (secondaryColor) {
+        const secondaryImagePath = getImagePath({ ...apiProduct, couleur_principale: secondaryColor });
+        colors.push({
+            key: secondaryColor.toLowerCase(),
+            label: secondaryColor,
+            swatch: getSwatchPath(apiProduct, secondaryColor),
+            images: [
+                secondaryImagePath,
+                secondaryImagePath.replace('_AVANT_', '_COTER_'),
+                secondaryImagePath.replace('_AVANT_', '_ARRIERE_')
+            ],
+        });
+    }
+
+    return {
+        id: apiProduct.id,
+        name: apiProduct.nom,
+        short: apiProduct.nom.replace(apiProduct.marque + ' ', ''),
+        brand: apiProduct.marque,
+        ref: apiProduct.ref,
+        badge: apiProduct.categorie_nom,
+        price: apiProduct.prix + ' €',
+        availability: apiProduct.stock > 0 ? 'Disponible' : 'Sur demande',
+        specs: {
+            power: 'N/A',
+            zeroTo100: 'N/A',
+            drive: 'N/A',
+            edition: 'N/A',
+        },
+        description: apiProduct.description,
+        image: primaryImagePath,
+        colors: colors,
+    };
+}
+
+let product;
+
+// Fallback function for static products (not from API)
+const getProduct = (id) => {
+  console.log('Using placeholder product for id:', id);
+  return {
+    id: 1,
+    name: 'Produit',
+    short: 'Produit',
+    brand: 'Marque',
+    ref: 'REF-001',
+    badge: 'Standard',
+    price: 'Sur devis',
+    availability: 'Disponible',
+    specs: {
+      power: 'N/A',
+      zeroTo100: 'N/A',
+      drive: 'N/A',
+      edition: 'N/A',
+    },
+    description: 'Description du produit',
+    image: '../assets/img/maserati/Maserati-index.png',
+    colors: [{
+      key: 'default',
+      label: 'Standard',
+      images: ['../assets/img/maserati/Maserati-index.png', '../assets/img/maserati/Maserati-index.png', '../assets/img/maserati/Maserati-index.png']
+    }]
+  };
+};
+
+console.log('Is numeric:', /^\d+$/.test(productId));
+
+if (/^\d+$/.test(productId)) {
+    console.log('Fetching from API for id:', productId);
+    fetch(`http://localhost:3000/api/produits/${productId}`)
+        .then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) throw new Error('Product not found');
+            return response.json();
+        })
+        .then(apiProduct => {
+            console.log('API product:', apiProduct);
+            product = adaptProductFromAPI(apiProduct);
+            console.log('Adapted product:', product);
+            initializePage();
+        })
+        .catch(error => {
+            console.error('Error fetching product:', error);
+            product = getProduct("porsche-gt3rs");
+            initializePage();
+        });
+} else {
+    console.log('Using static product:', productId);
+    product = getProduct(productId);
+    initializePage();
+}
+
+function initializePage() {
 
 const track = document.getElementById("carouselTrack");
 const prevBtn = document.getElementById("prevSlide");
@@ -32,7 +218,15 @@ const viewerNext = document.getElementById("viewerNext");
 const viewerIndicators = document.getElementById("viewerIndicators");
 const topbar = document.querySelector(".topbar");
 
-let index = 0;
+console.log('Viewer elements found:', {
+  imageViewer: !!imageViewer,
+  viewerImg: !!viewerImg,
+  viewerCaption: !!viewerCaption,
+  viewerIndicators: !!viewerIndicators,
+  viewerClose: !!viewerClose,
+  viewerPrev: !!viewerPrev,
+  viewerNext: !!viewerNext
+});
 let touchStartX = 0;
 let touchDeltaX = 0;
 let viewerIndex = 0;
@@ -57,7 +251,11 @@ const updateViewer = (nextIndex) => {
 
 // Ouvre l'aperçu plein écran de l'image sélectionnée.
 const openViewer = (images, startIndex) => {
-  if (!imageViewer || !viewerImg) return;
+  console.log('Opening viewer with images:', images, 'startIndex:', startIndex);
+  if (!imageViewer || !viewerImg) {
+    console.error('Viewer elements not found!');
+    return;
+  }
   viewerImages = images.slice();
   viewerIndex = startIndex || 0;
   const alt = viewerImg.alt || "";
@@ -68,7 +266,11 @@ const openViewer = (images, startIndex) => {
       btn.type = "button";
       btn.setAttribute("aria-label", `Aller à l'image ${i + 1}`);
       if (i === viewerIndex) btn.classList.add("active");
-      btn.addEventListener("click", () => updateViewer(i));
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        updateViewer(i);
+      });
       viewerIndicators.appendChild(btn);
     });
   }
@@ -77,17 +279,23 @@ const openViewer = (images, startIndex) => {
   imageViewer.classList.add("open");
   imageViewer.setAttribute("aria-hidden", "false");
   document.body.classList.add("viewer-open");
+  console.log('Viewer opened successfully');
 };
 
 // Ferme l'aperçu plein écran.
 const closeViewer = () => {
-  if (!imageViewer || !viewerImg) return;
+  console.log('Closing viewer');
+  if (!imageViewer || !viewerImg) {
+    console.error('Viewer elements not found!');
+    return;
+  }
   imageViewer.classList.remove("open");
   imageViewer.setAttribute("aria-hidden", "true");
   document.body.classList.remove("viewer-open");
   viewerImg.src = "";
   if (viewerCaption) viewerCaption.textContent = "";
   viewerImages = [];
+  console.log('Viewer closed successfully');
 };
 
 // Met a jour la position du carrousel et l'indicateur actif.
@@ -272,14 +480,51 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeViewer();
 });
 
-if (viewerClose) viewerClose.addEventListener("click", closeViewer);
-if (viewerPrev) viewerPrev.addEventListener("click", () => updateViewer(viewerIndex - 1));
-if (viewerNext) viewerNext.addEventListener("click", () => updateViewer(viewerIndex + 1));
-if (imageViewer) {
-  imageViewer.addEventListener("click", (e) => {
-    if (e.target === imageViewer || e.target === viewerImg) closeViewer();
-  });
-}
+// Attache les écouteurs d'événements pour le viewer plein écran
+const attachViewerListeners = () => {
+  console.log('Attaching viewer listeners...');
+
+  if (viewerClose) {
+    viewerClose.addEventListener("click", (e) => {
+      console.log('Close button clicked');
+      e.preventDefault();
+      e.stopPropagation();
+      closeViewer();
+    });
+    console.log('Close button listener attached');
+  }
+
+  if (viewerPrev) {
+    viewerPrev.addEventListener("click", (e) => {
+      console.log('Prev button clicked');
+      e.preventDefault();
+      e.stopPropagation();
+      updateViewer(viewerIndex - 1);
+    });
+    console.log('Prev button listener attached');
+  }
+
+  if (viewerNext) {
+    viewerNext.addEventListener("click", (e) => {
+      console.log('Next button clicked');
+      e.preventDefault();
+      e.stopPropagation();
+      updateViewer(viewerIndex + 1);
+    });
+    console.log('Next button listener attached');
+  }
+
+  if (imageViewer) {
+    imageViewer.addEventListener("click", (e) => {
+      console.log('Viewer background clicked, target:', e.target.id || e.target.class);
+      // Only close if clicking on the viewer background or image itself, not on buttons
+      if (e.target === imageViewer || e.target === viewerImg) {
+        closeViewer();
+      }
+    });
+    console.log('Viewer background listener attached');
+  }
+};
 
 track.addEventListener("touchstart", (e) => {
   touchStartX = e.touches[0].clientX;
@@ -306,4 +551,9 @@ if (topbar) {
       topbar.classList.remove("is-hidden");
     }
   });
+}
+
+// Attach viewer listeners NOW that everything is initialized
+console.log('About to attach viewer listeners from initializePage');
+attachViewerListeners();
 }

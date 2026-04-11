@@ -7,8 +7,49 @@
   drawer.hidden = true;
   backdrop.hidden = true;
 
+  // Check if user is logged in and update drawer content
+  const updateDrawerContent = () => {
+    const userData = localStorage.getItem('lacasa_user');
+    const drawerBody = drawer.querySelector('.drawer-body');
+    const drawerActions = drawer.querySelector('.drawer-actions');
+
+    if (userData) {
+      const user = JSON.parse(userData);
+      drawerBody.innerHTML = `
+        <div class="user-info">
+          <p><strong>${user.prenom} ${user.nom}</strong></p>
+          <p>${user.email}</p>
+        </div>
+      `;
+      drawerActions.innerHTML = `
+        <a href="favoris.html">Mes favoris</a>
+        <a href="panier.html">Mon panier</a>
+        <button id="logoutBtn" class="logout-btn">Se déconnecter</button>
+      `;
+
+      // Add logout functionality
+      const logoutBtn = drawerActions.querySelector('#logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          localStorage.removeItem('lacasa_user');
+          updateDrawerContent();
+          closeDrawer();
+          // Redirect to home page
+          window.location.href = 'index.html';
+        });
+      }
+    } else {
+      drawerBody.innerHTML = '<p>Connectez-vous pour retrouver vos favoris, votre panier et vos commandes.</p>';
+      drawerActions.innerHTML = `
+        <a class="primary" href="login.html">Se connecter</a>
+        <a href="register.html">Créer un compte</a>
+      `;
+    }
+  };
+
   // Ouvre le tiroir de compte coulissant.
   const openDrawer = () => {
+    updateDrawerContent();
     drawer.hidden = false;
     backdrop.hidden = false;
     drawer.classList.add("open");
@@ -45,4 +86,7 @@
     // Autorise la touche Echap pour fermer le tiroir.
     if (e.key === "Escape") closeDrawer();
   });
+
+  // Initialize drawer content on page load
+  updateDrawerContent();
 })();
