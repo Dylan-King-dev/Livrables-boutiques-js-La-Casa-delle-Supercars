@@ -103,6 +103,9 @@ function adaptProductFromAPI(apiProduct) {
   const colors = [];
   const primaryColor = apiProduct.couleur_principale || 'Noir';
   const secondaryColor = apiProduct.couleur_secondaire;
+  const reduction = Number(apiProduct.reduction) || 0;
+  const prixOriginal = Number(apiProduct.prix);
+  const prixReduit = reduction > 0 ? prixOriginal * (1 - reduction / 100) : null;
 
   const buildImages = (color) => {
     const imagePath = getImagePath({ ...apiProduct, couleur_principale: color });
@@ -138,13 +141,19 @@ function adaptProductFromAPI(apiProduct) {
   }
 
   return {
-    id: apiProduct.id,           // keep as original type from API
+    id: apiProduct.id,
     name: apiProduct.nom,
     short: apiProduct.nom.replace(apiProduct.marque + ' ', ''),
     brand: apiProduct.marque,
     ref: apiProduct.ref,
     badge: apiProduct.categorie_nom,
-    price: apiProduct.prix + ' €',
+    reduction: reduction,
+    prixOriginal: prixOriginal,
+    prixReduit: prixReduit,
+    price: prixReduit
+      ? new Intl.NumberFormat('fr-FR').format(prixReduit) + ' €'
+      : new Intl.NumberFormat('fr-FR').format(prixOriginal) + ' €',
+    priceOriginalFormatted: new Intl.NumberFormat('fr-FR').format(prixOriginal) + ' €',
     availability: apiProduct.stock > 0 ? `${apiProduct.stock} en stock` : 'Sur demande',
     stock: Number(apiProduct.stock),
     specs: {
@@ -162,7 +171,6 @@ function adaptProductFromAPI(apiProduct) {
 let product;
 
 const getProduct = (id) => {
-  console.log('Using placeholder product for id:', id);
   return {
     id: 1,
     name: 'Produit',
@@ -170,7 +178,11 @@ const getProduct = (id) => {
     brand: 'Marque',
     ref: 'REF-001',
     badge: 'Standard',
+    reduction: 0,
+    prixOriginal: 0,
+    prixReduit: null,
     price: 'Sur devis',
+    priceOriginalFormatted: 'Sur devis',
     availability: 'Disponible',
     stock: 0,
     specs: { power: 'N/A', zeroTo100: 'N/A', drive: 'N/A', edition: 'N/A' },
@@ -192,8 +204,6 @@ if (/^\d+$/.test(productId)) {
     })
     .then(apiProduct => {
       product = adaptProductFromAPI(apiProduct);
-      console.log('product.id type:', typeof product.id, 'value:', product.id);
-      console.log('product.stock:', product.stock);
       initializePage();
     })
     .catch(error => {
@@ -208,43 +218,46 @@ if (/^\d+$/.test(productId)) {
 
 function initializePage() {
 
-  const track            = document.getElementById("carouselTrack");
-  const prevBtn          = document.getElementById("prevSlide");
-  const nextBtn          = document.getElementById("nextSlide");
-  const pauseBtn         = document.getElementById("pauseSlides");
-  const indicators       = Array.from(document.querySelectorAll("#carouselIndicators button"));
-  const colorOptions     = document.getElementById("colorOptions");
-  const colorLabel       = document.getElementById("colorLabel");
-  const productBadge     = document.getElementById("productBadge");
-  const productTitle     = document.getElementById("productTitle");
-  const productRef       = document.getElementById("productRef");
-  const productDesc      = document.getElementById("productDesc");
-  const productPrice     = document.getElementById("productPrice");
+  const track = document.getElementById("carouselTrack");
+  const prevBtn = document.getElementById("prevSlide");
+  const nextBtn = document.getElementById("nextSlide");
+  const pauseBtn = document.getElementById("pauseSlides");
+  const indicators = Array.from(document.querySelectorAll("#carouselIndicators button"));
+  const colorOptions = document.getElementById("colorOptions");
+  const colorLabel = document.getElementById("colorLabel");
+  const productBadge = document.getElementById("productBadge");
+  const productTitle = document.getElementById("productTitle");
+  const productRef = document.getElementById("productRef");
+  const productDesc = document.getElementById("productDesc");
+  const productPrice = document.getElementById("productPrice");
   const productAvailability = document.getElementById("productAvailability");
-  const specPower        = document.getElementById("specPower");
-  const specZero         = document.getElementById("specZero");
-  const specDrive        = document.getElementById("specDrive");
-  const specEdition      = document.getElementById("specEdition");
-  const addToCartBtn     = document.getElementById("addToCart");
-  const bookTestBtn      = document.getElementById("bookTest");
-  const toggleFavBtn     = document.getElementById("toggleFav");
-  const statusMessage    = document.getElementById("statusMessage");
-  const imageViewer      = document.getElementById("imageViewer");
-  const viewerImg        = document.getElementById("viewerImg");
-  const viewerClose      = document.getElementById("viewerClose");
-  const viewerCaption    = document.getElementById("viewerCaption");
-  const viewerPrev       = document.getElementById("viewerPrev");
-  const viewerNext       = document.getElementById("viewerNext");
+  const specPower = document.getElementById("specPower");
+  const specZero = document.getElementById("specZero");
+  const specDrive = document.getElementById("specDrive");
+  const specEdition = document.getElementById("specEdition");
+  const addToCartBtn = document.getElementById("addToCart");
+  const bookTestBtn = document.getElementById("bookTest");
+  const toggleFavBtn = document.getElementById("toggleFav");
+  const statusMessage = document.getElementById("statusMessage");
+  const imageViewer = document.getElementById("imageViewer");
+  const viewerImg = document.getElementById("viewerImg");
+  const viewerClose = document.getElementById("viewerClose");
+  const viewerCaption = document.getElementById("viewerCaption");
+  const viewerPrev = document.getElementById("viewerPrev");
+  const viewerNext = document.getElementById("viewerNext");
   const viewerIndicators = document.getElementById("viewerIndicators");
-  const topbar           = document.querySelector(".topbar");
+  const topbar = document.querySelector(".topbar");
+  const qtyInput = document.getElementById("qtyInput");
+  const qtyPlus = document.getElementById("qtyPlus");
+  const qtyMinus = document.getElementById("qtyMinus");
 
-  let touchStartX  = 0;
-  let touchDeltaX  = 0;
-  let viewerIndex  = 0;
+  let touchStartX = 0;
+  let touchDeltaX = 0;
+  let viewerIndex = 0;
   let viewerImages = [];
-  let isPaused     = false;
+  let isPaused = false;
   let continuousMode = true;
-  let index        = 0;
+  let index = 0;
 
   // ── Viewer ───────────────────────────────────────────────
 
@@ -262,7 +275,7 @@ function initializePage() {
   const openViewer = (images, startIndex) => {
     if (!imageViewer || !viewerImg) return;
     viewerImages = images.slice();
-    viewerIndex  = startIndex || 0;
+    viewerIndex = startIndex || 0;
     if (viewerIndicators) {
       viewerIndicators.innerHTML = "";
       viewerImages.forEach((_, i) => {
@@ -383,15 +396,52 @@ function initializePage() {
 
   // ── Populate page ─────────────────────────────────────────
 
-  if (productBadge)       productBadge.textContent     = product.badge || product.short || product.brand || "Signature";
-  if (productTitle)       productTitle.textContent      = product.name;
-  if (productRef)         productRef.textContent        = `Réf. ${product.ref || product.id}`;
-  if (productDesc)        productDesc.textContent       = product.description || `${product.brand} — série limitée, préparée sur mesure.`;
-  if (productPrice)       productPrice.textContent      = product.price || "Sur devis";
-  if (specPower)          specPower.textContent         = product.specs?.power    || "—";
-  if (specZero)           specZero.textContent          = product.specs?.zeroTo100 || "—";
-  if (specDrive)          specDrive.textContent         = product.specs?.drive    || "—";
-  if (specEdition)        specEdition.textContent       = product.specs?.edition  || "—";
+  if (productBadge) {
+    productBadge.textContent = product.badge || product.short || product.brand || "Signature";
+
+    // Discount badge top-right of the card-top area
+    if (product.reduction > 0) {
+      const existingBadge = document.getElementById('discountBadge');
+      if (!existingBadge) {
+        const discountBadge = document.createElement('span');
+        discountBadge.id = 'discountBadge';
+        discountBadge.textContent = `-${product.reduction}%`;
+        discountBadge.style.cssText = `
+          display: inline-block;
+          background: #c9a96e;
+          color: #0e0e0e;
+          font-size: 0.72rem;
+          font-weight: 700;
+          padding: 2px 8px;
+          border-radius: 2px;
+          letter-spacing: 0.06em;
+          margin-left: auto;
+        `;
+        // Insert after badge in the card-top row
+        productBadge.insertAdjacentElement('afterend', discountBadge);
+      }
+    }
+  }
+
+  if (productTitle) productTitle.textContent = product.name;
+  if (productRef) productRef.textContent = `Réf. ${product.ref || product.id}`;
+  if (productDesc) productDesc.textContent = product.description || `${product.brand} — série limitée, préparée sur mesure.`;
+
+  // ── Price with reduction ──────────────────────────────────
+  if (productPrice) {
+    if (product.reduction > 0) {
+      productPrice.innerHTML = `
+        <span style="text-decoration:line-through;color:#666;font-size:0.85em;margin-right:8px;">${product.priceOriginalFormatted}</span><span style="color:#c9a96e;font-weight:600;">${product.price}</span>
+      `;
+    } else {
+      productPrice.textContent = product.price || "Sur devis";
+    }
+  }
+
+  if (specPower) specPower.textContent = product.specs?.power || "—";
+  if (specZero) specZero.textContent = product.specs?.zeroTo100 || "—";
+  if (specDrive) specDrive.textContent = product.specs?.drive || "—";
+  if (specEdition) specEdition.textContent = product.specs?.edition || "—";
 
   if (productAvailability) {
     productAvailability.textContent = product.availability || "Disponible";
@@ -404,48 +454,91 @@ function initializePage() {
   refreshFavState();
 
   // ── Add to cart ───────────────────────────────────────────
+  if (qtyInput && qtyPlus && qtyMinus) {
+    qtyPlus.addEventListener("click", () => {
+      qtyInput.value = Number(qtyInput.value) + 1;
+    });
+
+    qtyMinus.addEventListener("click", () => {
+      if (Number(qtyInput.value) > 1) {
+        qtyInput.value = Number(qtyInput.value) - 1;
+      }
+    });
+  }
 
   if (addToCartBtn) {
-    addToCartBtn.addEventListener("click", () => {
-      const alreadyInCart = countInCart(product.id);
-      console.log('stock:', product.stock, 'alreadyInCart:', alreadyInCart);
+  addToCartBtn.addEventListener("click", () => {
+    const qtyToAdd = Number(qtyInput?.value) || 1;
+    const alreadyInCart = countInCart(product.id);
 
-      if (alreadyInCart >= product.stock) {
-        const msg = product.stock === 0
-          ? "Rupture de stock"
-          : "Stock maximum atteint";
-        const detail = product.stock === 0
-          ? `${product.name} n'est plus disponible.`
-          : `Vous avez déjà les ${product.stock} exemplaire(s) disponibles dans votre panier.`;
+    console.log('stock:', product.stock, 'alreadyInCart:', alreadyInCart, 'qtyToAdd:', qtyToAdd);
 
-        addToCartBtn.textContent = msg;
-        addToCartBtn.classList.add("is-unavailable");
-        if (statusMessage) statusMessage.textContent = detail;
-        setTimeout(() => {
-          addToCartBtn.textContent = "Ajouter au panier";
-          addToCartBtn.classList.remove("is-unavailable");
-        }, 2000);
-        return;
-      }
+    // ❌ Out of stock OR already max
+    if (product.stock === 0 || alreadyInCart >= product.stock) {
+      const msg = "Rupture de stock";
+      const detail = `${product.name} n'est plus disponible.`;
 
-      addItem(STORAGE_KEYS.cart, product.id);
-      console.log('Cart after add:', getList(STORAGE_KEYS.cart));
+      addToCartBtn.textContent = msg;
+      addToCartBtn.classList.add("is-unavailable");
 
-      addToCartBtn.textContent = "Ajouté ✓";
-      if (statusMessage) statusMessage.textContent = `${product.name} ajouté au panier.`;
+      if (statusMessage) statusMessage.textContent = detail;
+
       setTimeout(() => {
         addToCartBtn.textContent = "Ajouter au panier";
-      }, 1200);
-    });
-  }
+        addToCartBtn.classList.remove("is-unavailable");
+      }, 2000);
 
-  // ── Book test ─────────────────────────────────────────────
+      return;
+    }
 
-  if (bookTestBtn) {
-    bookTestBtn.addEventListener("click", () => {
-      if (statusMessage) statusMessage.textContent = "Un conseiller vous recontactera pour organiser l'essai.";
-    });
-  }
+    // dépasse le stock
+    if (alreadyInCart + qtyToAdd > product.stock) {
+      const remaining = product.stock - alreadyInCart;
+
+      addToCartBtn.textContent = `Max ${remaining}`;
+
+      if (statusMessage) {
+        statusMessage.textContent = `Vous pouvez encore ajouter ${remaining} exemplaire(s).`;
+      }
+
+      setTimeout(() => {
+        addToCartBtn.textContent = "Ajouter au panier";
+      }, 2000);
+
+      return;
+    }
+
+    // Ajouter les items au panier
+    for (let i = 0; i < qtyToAdd; i++) {
+      addItem(STORAGE_KEYS.cart, product.id);
+    }
+
+    console.log('Cart after add:', getList(STORAGE_KEYS.cart));
+
+    addToCartBtn.textContent = "Ajouté ✓";
+
+    if (statusMessage) {
+      statusMessage.textContent = `${product.name} ajouté au panier (${qtyToAdd}).`;
+    }
+
+    // reset quantity
+    if (qtyInput) {
+  qtyInput.addEventListener("input", () => {
+    let value = Number(qtyInput.value);
+
+    if (value < 1) value = 1;
+    if (value > product.stock) value = product.stock;
+
+    qtyInput.value = value;
+  });
+}
+
+    setTimeout(() => {
+      addToCartBtn.textContent = "Ajouter au panier";
+    }, 1200);
+  });
+}
+
 
   // ── Favs toggle ───────────────────────────────────────────
 
@@ -474,8 +567,8 @@ function initializePage() {
   // ── Viewer controls ───────────────────────────────────────
 
   if (viewerClose) viewerClose.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); closeViewer(); });
-  if (viewerPrev)  viewerPrev.addEventListener("click",  (e) => { e.preventDefault(); e.stopPropagation(); updateViewer(viewerIndex - 1); });
-  if (viewerNext)  viewerNext.addEventListener("click",  (e) => { e.preventDefault(); e.stopPropagation(); updateViewer(viewerIndex + 1); });
+  if (viewerPrev) viewerPrev.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); updateViewer(viewerIndex - 1); });
+  if (viewerNext) viewerNext.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); updateViewer(viewerIndex + 1); });
   if (imageViewer) {
     imageViewer.addEventListener("click", (e) => {
       if (e.target === imageViewer || e.target === viewerImg) closeViewer();
@@ -485,8 +578,8 @@ function initializePage() {
   // ── Touch ─────────────────────────────────────────────────
 
   track.addEventListener("touchstart", (e) => { touchStartX = e.touches[0].clientX; touchDeltaX = 0; });
-  track.addEventListener("touchmove",  (e) => { touchDeltaX = e.touches[0].clientX - touchStartX; });
-  track.addEventListener("touchend",   () => {
+  track.addEventListener("touchmove", (e) => { touchDeltaX = e.touches[0].clientX - touchStartX; });
+  track.addEventListener("touchend", () => {
     if (Math.abs(touchDeltaX) > 40) updateCarousel(touchDeltaX > 0 ? index - 1 : index + 1);
     touchStartX = 0; touchDeltaX = 0;
   });
@@ -494,9 +587,9 @@ function initializePage() {
   // ── Keyboard ──────────────────────────────────────────────
 
   document.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowLeft")  updateCarousel(index - 1);
+    if (e.key === "ArrowLeft") updateCarousel(index - 1);
     if (e.key === "ArrowRight") updateCarousel(index + 1);
-    if (e.key === "Escape")     closeViewer();
+    if (e.key === "Escape") closeViewer();
   });
 
   // ── Topbar scroll ─────────────────────────────────────────
