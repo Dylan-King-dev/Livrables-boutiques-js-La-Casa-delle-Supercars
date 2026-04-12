@@ -1,18 +1,20 @@
 console.log('Script panier.js loaded');
 
-// Storage Keys
+// ── Storage Keys ─────────────────────────────────────────────
+
 const STORAGE_KEYS = {
   cart: 'lacasa_cart',
   favs: 'lacasa_favs'
 };
 
-// Storage utility functions
+// ── Storage utils ────────────────────────────────────────────
+
 const getList = (key) => {
   try {
     const stored = localStorage.getItem(key);
     return stored ? JSON.parse(stored) : [];
   } catch (e) {
-    console.error('Error reading from localStorage:', e);
+    console.error('Error reading localStorage:', e);
     return [];
   }
 };
@@ -20,14 +22,13 @@ const getList = (key) => {
 const removeItem = (key, item) => {
   try {
     const list = getList(key);
-    // Use String comparison to handle number/string mismatch
     const index = list.findIndex(i => String(i) === String(item));
     if (index > -1) {
       list.splice(index, 1);
       localStorage.setItem(key, JSON.stringify(list));
     }
   } catch (e) {
-    console.error('Error removing item from localStorage:', e);
+    console.error('Error removing item:', e);
   }
 };
 
@@ -35,38 +36,37 @@ const removeItem = (key, item) => {
 
 function normalizePorscheCategory(product) {
   const byModel = {
-    'Taycan Turbo GT':   'Electrique',
-    'Cayenne E-Hybrid':  'SUV',
-    'Cayenne Electric':  'Electrique',
-    'Macan':             'SUV',
-    'Panamera':          'Classic',
-    '911 Carrera RS':    'Sport',
-    '718 Spyder RS':     'Sport',
+    'Taycan Turbo GT': 'Electrique',
+    'Cayenne E-Hybrid': 'SUV',
+    'Cayenne Electric': 'Electrique',
+    'Macan': 'SUV',
+    'Panamera': 'Classic',
+    '911 Carrera RS': 'Sport',
+    '718 Spyder RS': 'Sport',
     '718 Cayman GT4 RS': 'Super Sport',
-    '911 GT3':           'Super Sport',
-    '911 Turbo S':       'Super Sport',
+    '911 GT3': 'Super Sport',
+    '911 Turbo S': 'Super Sport',
   };
   return byModel[product.nom] || product.categorie_nom || 'Sport';
 }
 
 function getImagePath(product) {
   const color = product.couleur_principale || 'Noir';
-  const modelFolder = product.nom
-    .replace(new RegExp(`^${product.marque || ''}\\s+`, 'i'), '')
-    .trim();
-  const ext = (modelFolder.includes('GT4 RS') || modelFolder.includes('Spyder RS'))
-    ? '.webp' : '.jpg';
+  const modelFolder = product.nom.replace(new RegExp(`^${product.marque || ''}\\s+`, 'i'), '').trim();
+  const ext = (modelFolder.includes('GT4 RS') || modelFolder.includes('Spyder RS')) ? '.webp' : '.jpg';
 
   if (product.marque === 'Maserati') {
-    const modelName  = product.nom.toUpperCase().replace(/ /g, '_');
+    const modelName = product.nom.toUpperCase().replace(/ /g, '_');
     const colorUpper = color.toUpperCase();
     return `../assets/img/maserati/${product.categorie_nom}/${modelName}/${modelName}_AVANT_${colorUpper}.jpg`;
-  } else if (product.marque === 'Porsche') {
+  }
+
+  if (product.marque === 'Porsche') {
     const category = normalizePorscheCategory(product);
     return `../assets/img/porsche/colours/${category}/${modelFolder}/${modelFolder} ${color}${ext}`;
-  } else {
-    return '../assets/img/maserati/Maserati-index.png';
   }
+
+  return '../assets/img/default.jpg';
 }
 
 // ── Price helpers ────────────────────────────────────────────
@@ -78,31 +78,31 @@ const formatPrice = (value) => {
   }).format(value) + ' €';
 };
 
-// ── Adapt API product ────────────────────────────────────────
+// ── Adapt API product (WITH DISCOUNT) ────────────────────────
 
 function adaptProductFromAPI(apiProduct) {
-  const primaryColor     = apiProduct.couleur_principale || 'Noir';
-  const primaryImagePath = getImagePath({ ...apiProduct, couleur_principale: primaryColor });
-  const rawPrice         = Number(apiProduct.prix);  // e.g. 125000
+  const rawPrice  = Number(apiProduct.prix);
+  const reduction = Number(apiProduct.reduction) || 0;
+
+  const finalPrice = reduction > 0
+    ? rawPrice * (1 - reduction / 100)
+    : rawPrice;
 
   return {
-    id:           apiProduct.id,
-    name:         apiProduct.nom,
-    brand:        apiProduct.marque,
-    ref:          apiProduct.ref,
-    badge:        apiProduct.categorie_nom,
-    price:        formatPrice(rawPrice),             // "125 000,00 €"
-    rawPrice:     rawPrice,
-    availability: apiProduct.stock > 0 ? `${apiProduct.stock} en stock` : 'Sur demande',
-    stock:        apiProduct.stock,
-    specs: {
-      power:     apiProduct.puissance + ' ch',
-      zeroTo100: apiProduct.zero_a_cent + ' s',
-      drive:     apiProduct.annee,
-      edition:   apiProduct.ref,
-    },
-    description: apiProduct.description,
-    image:       primaryImagePath,
+    id: apiProduct.id,
+    name: apiProduct.nom,
+    brand: apiProduct.marque,
+    image: getImagePath(apiProduct),
+
+    price: formatPrice(finalPrice),
+    originalPrice: reduction > 0 ? formatPrice(rawPrice) : null,
+
+    rawPrice: finalPrice,
+    reduction: reduction,
+
+    availability: apiProduct.stock > 0
+      ? `${apiProduct.stock} en stock`
+      : 'Sur demande'
   };
 }
 
@@ -117,78 +117,102 @@ const summaryTotal = document.getElementById('summaryTotal');
 
 const render = async () => {
   const ids = getList(STORAGE_KEYS.cart);
-  listEl.className = 'items';
+
   listEl.innerHTML = '';
 
   if (!ids.length) {
-    emptyEl.style.display = 'grid';
-    if (summaryCount) summaryCount.textContent = '0';
-    if (summaryTotal) summaryTotal.textContent = '0 €';
-    return;
+  console.log("Panier vide");
+
+  if (emptyEl) {
+    emptyEl.style.display = 'grid'; // ✅ show your existing design
   }
+
+  if (listEl) {
+    listEl.innerHTML = '';
+  }
+
+  if (summaryCount) summaryCount.textContent = '0';
+  if (summaryTotal) summaryTotal.textContent = '0 €';
+
+  return;
+}
 
   emptyEl.style.display = 'none';
 
-  let total    = 0;
-  let hasDevis = false;
+  let total = 0;
 
   for (const id of ids) {
     try {
-      const response = await fetch(`http://localhost:3000/api/produits/${id}`);
-      if (!response.ok) throw new Error('Product not found');
-      const apiProduct = await response.json();
-      const product    = adaptProductFromAPI(apiProduct);
+      const res = await fetch(`http://localhost:3000/api/produits/${id}`);
+      if (!res.ok) throw new Error('Erreur produit');
 
-      // Accumulate total using rawPrice (already a clean number)
-      if (product.rawPrice && product.rawPrice > 0) {
-        total += product.rawPrice;
-      } else {
-        hasDevis = true;
-      }
+      const apiProduct = await res.json();
+      const product = adaptProductFromAPI(apiProduct);
+
+      total += product.rawPrice;
 
       const card = document.createElement('div');
       card.className = 'item-card';
+
       card.innerHTML = `
         <img src="${product.image}" alt="${product.name}" />
+
         <div class="item-info">
           <h3>${product.name}</h3>
           <span class="item-brand">${product.brand}</span>
-          <span class="item-price">${product.price}</span>
+
+          <div class="item-price-wrapper">
+            ${
+              product.reduction > 0
+                ? `
+                <span class="item-price-old">${product.originalPrice}</span>
+                <span class="item-price-new">${product.price}</span>
+                <span class="item-discount">-${product.reduction}%</span>
+              `
+                : `<span class="item-price">${product.price}</span>`
+            }
+          </div>
+
           <span class="item-stock">${product.availability}</span>
         </div>
+
         <div class="item-actions">
-          <button class="btn-view"   type="button">Voir</button>
-          <button class="btn-remove" type="button" data-id="${product.id}">Retirer</button>
+          <button class="btn-view">Voir</button>
+          <button class="btn-remove" data-id="${product.id}">Retirer</button>
         </div>
       `;
 
-      card.querySelector('img').addEventListener('click', () => {
+      // Navigation
+      card.querySelector('img').onclick = () => {
         window.location.href = `produit.html?id=${product.id}`;
-      });
+      };
 
-      card.querySelector('.btn-view').addEventListener('click', () => {
+      card.querySelector('.btn-view').onclick = () => {
         window.location.href = `produit.html?id=${product.id}`;
-      });
+      };
 
-      card.querySelector('.btn-remove').addEventListener('click', () => {
+      // Remove item
+      card.querySelector('.btn-remove').onclick = () => {
         removeItem(STORAGE_KEYS.cart, product.id);
         render();
-      });
+      };
 
       listEl.appendChild(card);
-    } catch (error) {
-      console.error(`Error fetching product ${id}:`, error);
+
+    } catch (err) {
+      console.error('Erreur chargement produit:', err);
     }
   }
 
-  // Update summary
-  const totalText = hasDevis ? 'Sur devis' : formatPrice(total);
-  if (summaryCount) summaryCount.textContent = String(ids.length);
-  if (summaryTotal) summaryTotal.textContent = totalText;
+  // ── Summary ────────────────────────────────────────────────
 
-  // Persist for checkout
-  localStorage.setItem('lacasa_order_total', totalText);
+  if (summaryCount) summaryCount.textContent = String(ids.length);
+  if (summaryTotal) summaryTotal.textContent = formatPrice(total);
+
+  localStorage.setItem('lacasa_order_total', formatPrice(total));
   localStorage.setItem('lacasa_order_count', String(ids.length));
 };
+
+// ── Init ─────────────────────────────────────────────────────
 
 render();

@@ -50,19 +50,32 @@ function createCard(product) {
   card.setAttribute("data-price", product.prix);
 
   const imagePath = getImageByProduct(product);
+  const reduction = Number(product.reduction) || 0;
+  const prixOriginal = Number(product.prix);
+  const prixReduit = reduction > 0 ? prixOriginal * (1 - reduction / 100) : null;
+
+  const priceHTML = prixReduit
+    ? `<span class="spec price-original">${prixOriginal.toLocaleString("fr-FR")} €</span>
+       <span class="spec price-reduced">${prixReduit.toLocaleString("fr-FR")} €</span>`
+    : `<span class="spec">${prixOriginal.toLocaleString("fr-FR")} €</span>`;
+
+  const badgeHTML = reduction > 0
+    ? `<span class="card-badge">${product.categorie_nom || "N/A"}</span>
+       <span class="card-discount">-${reduction}%</span>`
+    : `<span class="card-badge">${product.categorie_nom || "N/A"}</span>`;
 
   card.innerHTML = `
     <a href="produit.html?id=${product.id}" class="card-link" aria-label="Voir le produit ${product.nom}">
       <div class="card-media">
         <img src="${imagePath}" alt="${product.nom}" />
-        <span class="card-badge">${product.categorie_nom || "N/A"}</span>
+        ${badgeHTML}
       </div>
       <div class="card-body">
         <h3>${product.nom}</h3>
         <p>${product.description}</p>
         <div class="card-specs">
           <span class="spec">${product.couleur_principale || "N/A"}</span>
-          <span class="spec">${Number(product.prix).toLocaleString("fr-FR")} €</span>
+          ${priceHTML}
           <span class="spec">Stock: ${product.stock}</span>
         </div>
         <div class="card-footer">
