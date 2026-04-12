@@ -1,27 +1,33 @@
-// les variable 
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const db = require('./db');
-// import des route page du site
+
 const produitsRoutes = require('./routes/produits');
 const registerRoutes = require('./routes/back_register');
 const loginRoutes = require('./routes/back_login');
-// on creer le port ou on veux envoyer les requete :)
+
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middlewares
+// 1. Middlewares en premier
 app.use(cors());
 app.use(express.json());
 
-// Routes API (endpoints (fin URL aprés http://localhost:3000 ex:http://localhost:3000/api/produits affiche tout les produit de la table produits))
+// 2. Routes API
 app.use('/api/produits', produitsRoutes);
 app.use('/api/utilisateurs', registerRoutes);
 app.use('/api/utilisateurs', loginRoutes);
 
+// 3. Fichiers statiques
+app.use(express.static(path.join(__dirname, '../frontend')));
 
-// Démarrage du serveur
+// 4. Catch-all 404 — toujours en dernier
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(process.env.FRONTEND_PATH, 'pages/404.html'));
+});
+
 app.listen(port, () => {
-	console.log(`Server running on port ${port}`);
+  console.log(`Server running on port ${port}`);
 });

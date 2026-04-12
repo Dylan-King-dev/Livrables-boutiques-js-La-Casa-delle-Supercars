@@ -14,20 +14,20 @@ let currentSort = "alphabetical";
 // Table de correspondance des images côté front
 const PRODUCT_IMAGES = {
   Porsche: {
-    "718 Spyder RS": "../assets/img/porsche/colours/Sport/718 Spyder RS/718 Spyder RS.jpg",
-    "911 Carrera RS": "../assets/img/porsche/colours/Sport/911 Carrera RS/911 Carrera RS.jpg",
-    "Panamera": "../assets/img/porsche/colours/Classic/Panamera/Panamera Bleu.jpg",
-    "Cayenne E-Hybrid": "../assets/img/porsche/colours/SUV/Cayenne E-Hybrid/Cayenne E-Hybrid.jpg",
-    "Cayenne Electric": "../assets/img/porsche/colours/Electrique/Cayenne Electric/Cayenne Electric.jpg",
+    "718 Spyder RS": "../assets/img/porsche/colours/Sport/718 Spyder RS/718 Spyder RS Argent.webp",
+    "911 Carrera RS": "../assets/img/porsche/colours/Sport/911 Carrera RS/911 Carrera RS Rouge.jpg",
+    "Panamera": "../assets/img/porsche/colours/Classic/Panamera/Panamera Blanc.jpg",
+    "Cayenne E-Hybrid": "../assets/img/porsche/colours/SUV/Cayenne E-Hybrid/Cayenne E-Hybrid Blanc.jpg",
+    "Cayenne Electric": "../assets/img/porsche/colours/Electrique/Cayenne Electric/Cayenne Electric Gris.jpg",
     "Macan": "../assets/img/porsche/colours/SUV/Macan/Macan Orange.jpg",
-    "Taycan Turbo GT": "../assets/img/porsche/colours/Electrique/Taycan Turbo GT/Taycan Turbo GT Bleu.jpg",
-    "718 Cayman GT4 RS": "../assets/img/porsche/colours/Super Sport/718 Cayman GT4 RS/718 Cayman GT4 RS.jpg",
+    "Taycan Turbo GT": "../assets/img/porsche/colours/Electrique/Taycan Turbo GT/Taycan Turbo GT Bleu Metal.jpg",
+    "718 Cayman GT4 RS": "../assets/img/porsche/colours/Super Sport/718 Cayman GT4 RS/718 Cayman GT4 RS Argent.webp",
     "911 GT3": "../assets/img/porsche/colours/Super Sport/911 GT3/911 GT3 Jaune.jpg",
-    "911 Turbo S": "../assets/img/porsche/colours/Super Sport/911 Turbo S/911 Turbo S.jpg"
+    "911 Turbo S": "../assets/img/porsche/colours/Super Sport/911 Turbo S/911 Turbo S Argent.jpg"
   },
   Maserati: {
-    "Granturismo Folgore": "../assets/img/maserati/Éléctrique/GRANTURISMO_FOLGORE/GRANTURISMO_FOLGORE_AVANT_NOIR.jpg",
-    "Grecale Folgore": "../assets/img/maserati/Éléctrique/GRECALE_FOLGORE/GRECALE_FOLGORE_AVANT_NOIR.jpg",
+    "Granturismo Folgore": "../assets/img/maserati/Electrique/GRANTURISMO_FOLGORE/GRANTURISMO_FOLGORE_AVANT_NOIR.jpg",
+    "Grecale Folgore": "../assets/img/maserati/Electrique/GRECALE_FOLGORE/GRECALE_FOLGORE_AVANT_NOIR.jpg",
     "Gran Turismo": "../assets/img/maserati/Sport/GRAN_TURISMO/GRAN_TURISMO_AVANT_NOIR.jpg",
     "Trofeo": "../assets/img/maserati/Sport/TROFEO/TROFEO_AVANT_NOIR.jpg",
     "Grancabrio": "../assets/img/maserati/Sport Cabrio/GRANCABRIO/GRANCABRIO_AVANT_OR.jpg",
@@ -50,19 +50,32 @@ function createCard(product) {
   card.setAttribute("data-price", product.prix);
 
   const imagePath = getImageByProduct(product);
+  const reduction = Number(product.reduction) || 0;
+  const prixOriginal = Number(product.prix);
+  const prixReduit = reduction > 0 ? prixOriginal * (1 - reduction / 100) : null;
+
+  const priceHTML = prixReduit
+    ? `<span class="spec price-original">${prixOriginal.toLocaleString("fr-FR")} €</span>
+       <span class="spec price-reduced">${prixReduit.toLocaleString("fr-FR")} €</span>`
+    : `<span class="spec">${prixOriginal.toLocaleString("fr-FR")} €</span>`;
+
+  const badgeHTML = reduction > 0
+    ? `<span class="card-badge">${product.categorie_nom || "N/A"}</span>
+       <span class="card-discount">-${reduction}%</span>`
+    : `<span class="card-badge">${product.categorie_nom || "N/A"}</span>`;
 
   card.innerHTML = `
     <a href="produit.html?id=${product.id}" class="card-link" aria-label="Voir le produit ${product.nom}">
       <div class="card-media">
         <img src="${imagePath}" alt="${product.nom}" />
-        <span class="card-badge">${product.categorie_nom || "N/A"}</span>
+        ${badgeHTML}
       </div>
       <div class="card-body">
         <h3>${product.nom}</h3>
         <p>${product.description}</p>
         <div class="card-specs">
           <span class="spec">${product.couleur_principale || "N/A"}</span>
-          <span class="spec">${Number(product.prix).toLocaleString("fr-FR")} €</span>
+          ${priceHTML}
           <span class="spec">Stock: ${product.stock}</span>
         </div>
         <div class="card-footer">

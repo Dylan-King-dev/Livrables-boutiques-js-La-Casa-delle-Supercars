@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="../assets/css/footer.css" />
 </head>
 <body>
+
   <header class="topbar">
     <div class="topbar-logo">
       <a href="index.html">
@@ -29,55 +30,124 @@
   </header>
 
   <main class="page">
-    <h1>Paiement</h1>
-    <div class="grid">
-      <section class="card">
-        <h2>Informations</h2>
-        <div class="field">
-          <label for="cardName">Nom sur la carte</label>
-          <input id="cardName" type="text" placeholder="Jean Dupont" />
+    <div class="page-header">
+      <h1>Paiement</h1>
+      <span class="step-indicator">Étape finale</span>
+    </div>
+
+    <div class="layout">
+
+      <!-- ── Card Details ── -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          </div>
+          <h2>Informations de paiement</h2>
         </div>
-        <div class="field">
-          <label for="cardNumber">Numéro de carte</label>
-          <input id="cardNumber" type="text" placeholder="1234 5678 9012 3456" />
+
+        <div class="fields">
+          <div class="card-logos">
+            <div class="card-logo">VISA</div>
+            <div class="card-logo">MC</div>
+            <div class="card-logo">AMEX</div>
+          </div>
+
+          <div class="field">
+            <label for="cardName">Nom sur la carte</label>
+            <input id="cardName" type="text" placeholder="Jean Dupont" autocomplete="cc-name" />
+          </div>
+
+          <div class="field">
+            <label for="cardNumber">Numéro de carte</label>
+            <input id="cardNumber" type="text" placeholder="1234 5678 9012 3456" autocomplete="cc-number" maxlength="23" />
+          </div>
+
+          <div class="fields-row">
+            <div class="field">
+              <label for="cardExpiry">Expiration</label>
+              <input id="cardExpiry" type="text" placeholder="MM/AA" autocomplete="cc-exp" maxlength="5" />
+            </div>
+            <div class="field">
+              <label for="cardCvc">CVC</label>
+              <input id="cardCvc" type="text" placeholder="123" autocomplete="cc-csc" maxlength="4" />
+            </div>
+          </div>
         </div>
-        <div class="field">
-          <label for="cardExpiry">Expiration</label>
-          <input id="cardExpiry" type="text" placeholder="MM/AA" />
+      </div>
+
+      <!-- ── Delivery Address ── -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          </div>
+          <h2>Adresse de livraison</h2>
         </div>
-        <div class="field">
-          <label for="cardCvc">CVC</label>
-          <input id="cardCvc" type="text" placeholder="123" />
+
+        <div class="fields">
+          <div class="field" id="addressField">
+            <label for="address">Adresse</label>
+            <input id="address" type="text" placeholder="12 rue de Rivoli" autocomplete="street-address" />
+            <div class="address-suggestions" id="address-suggestions"></div>
+          </div>
+
+          <div class="fields-row">
+            <div class="field">
+              <label for="city">Ville</label>
+              <input id="city" type="text" placeholder="Paris" autocomplete="address-level2" />
+            </div>
+            <div class="field">
+              <label for="postal">Code postal</label>
+              <input id="postal" type="text" placeholder="75001" autocomplete="postal-code" maxlength="5" />
+            </div>
+          </div>
         </div>
-      </section>
-      <section class="card">
-        <h2>Récapitulatif</h2>
-        <div class="summary">
-          <div>Articles: <strong id="payCount">0</strong></div>
-          <div>Livraison: <strong>Standard sécurisée</strong></div>
-          <div>Total estimé: <strong id="payTotal">Sur devis</strong></div>
+      </div>
+
+      <!-- ── Summary ── -->
+      <div class="card summary-card">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+          </div>
+          <h2>Récapitulatif</h2>
         </div>
-        <div class="actions">
-          <button class="btn" type="button">Payer maintenant</button>
+
+        <div class="summary-line">
+          <span>Articles</span>
+          <span><strong id="payCount">0</strong></span>
         </div>
-      </section>
-      <section class="card">
-        <h2>Adresse de livraison</h2>
-        <div class="field">
-          <label for="address">Adresse</label>
-          <input id="address" type="text" placeholder="12 rue de Rivoli" />
+        <div class="summary-line">
+          <span>Livraison</span>
+          <span>Standard sécurisée</span>
         </div>
-        <div class="field">
-          <label for="city">Ville</label>
-          <input id="city" type="text" placeholder="Paris" />
+        <div class="summary-line">
+          <span>Délai estimé</span>
+          <span>5–10 jours ouvrés</span>
         </div>
-        <div class="field">
-          <label for="postal">Code postal</label>
-          <input id="postal" type="text" placeholder="75001" />
+
+        <div class="summary-total">
+          <span class="label">Total estimé</span>
+          <span class="amount" id="payTotal">Sur devis</span>
         </div>
-      </section>
+
+        <div class="divider"></div>
+
+        <div class="security-badge">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Paiement 100 % sécurisé — chiffrement SSL 256-bit</span>
+        </div>
+
+        <button class="btn-pay" type="button">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Payer maintenant
+        </button>
+      </div>
+
     </div>
   </main>
+
   <footer class="site-footer">
     <div class="footer-col">
       <strong>La Casa</strong>
@@ -99,6 +169,7 @@
       <span>Essais privés</span>
     </div>
   </footer>
+
   <div class="drawer-backdrop" id="drawerBackdrop" aria-hidden="true"></div>
   <aside class="account-drawer" id="accountDrawer" aria-hidden="true">
     <div class="drawer-header">
@@ -113,10 +184,8 @@
       <a href="register.html">Créer un compte</a>
     </div>
   </aside>
+
   <script src="../js/paiement.js"></script>
   <script src="../js/account-drawer.js"></script>
 </body>
 </html>
-
-
-

@@ -48,10 +48,9 @@ a {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  position: relative;
 }
 
-.page::before {
+.body::before {
   content: "";
   position: fixed;
   inset: 0;
@@ -716,4 +715,32 @@ footer strong {
   .topbar nav {
     display: none;
   }
+}
+
+.price-original {
+  text-decoration: line-through;
+  color: #888;
+  font-size: 0.85em;
+}
+
+.price-reduced {
+  color: #c9a96e;
+  font-weight: 600;
+}
+
+.card-media {
+  position: relative; /* important for absolute positioning */
+}
+
+.card-discount {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: linear-gradient(135deg, #c9a96e, #d89821);
+  color: #fff;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
