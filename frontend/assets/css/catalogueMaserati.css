@@ -48,10 +48,9 @@ a {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  position: relative;
 }
 
-.page::before {
+.body::before {
   content: "";
   position: fixed;
   inset: 0;
