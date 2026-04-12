@@ -20,7 +20,8 @@ const getList = (key) => {
 const removeItem = (key, item) => {
   try {
     const list = getList(key);
-    const index = list.indexOf(item);
+    // Use String comparison to handle number/string mismatch
+    const index = list.findIndex(i => String(i) === String(item));
     if (index > -1) {
       list.splice(index, 1);
       localStorage.setItem(key, JSON.stringify(list));
@@ -30,7 +31,7 @@ const removeItem = (key, item) => {
   }
 };
 
-// ── Image helpers (mirrors produit.js) ──────────────────────
+// ── Image helpers ────────────────────────────────────────────
 
 function normalizePorscheCategory(product) {
   const byModel = {
@@ -54,8 +55,7 @@ function getImagePath(product) {
     .replace(new RegExp(`^${product.marque || ''}\\s+`, 'i'), '')
     .trim();
   const ext = (modelFolder.includes('GT4 RS') || modelFolder.includes('Spyder RS'))
-    ? '.webp'
-    : '.jpg';
+    ? '.webp' : '.jpg';
 
   if (product.marque === 'Maserati') {
     const modelName  = product.nom.toUpperCase().replace(/ /g, '_');
@@ -69,11 +69,21 @@ function getImagePath(product) {
   }
 }
 
-// ── Adapt API product to local format ───────────────────────
+// ── Price helpers ────────────────────────────────────────────
+
+const formatPrice = (value) => {
+  return new Intl.NumberFormat('fr-FR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value) + ' €';
+};
+
+// ── Adapt API product ────────────────────────────────────────
 
 function adaptProductFromAPI(apiProduct) {
   const primaryColor     = apiProduct.couleur_principale || 'Noir';
   const primaryImagePath = getImagePath({ ...apiProduct, couleur_principale: primaryColor });
+  const rawPrice         = Number(apiProduct.prix);  // e.g. 125000
 
   return {
     id:           apiProduct.id,
@@ -81,8 +91,8 @@ function adaptProductFromAPI(apiProduct) {
     brand:        apiProduct.marque,
     ref:          apiProduct.ref,
     badge:        apiProduct.categorie_nom,
-    price:        apiProduct.prix + ' €',
-    rawPrice:     Number(apiProduct.prix),
+    price:        formatPrice(rawPrice),             // "125 000,00 €"
+    rawPrice:     rawPrice,
     availability: apiProduct.stock > 0 ? `${apiProduct.stock} en stock` : 'Sur demande',
     stock:        apiProduct.stock,
     specs: {
@@ -95,20 +105,6 @@ function adaptProductFromAPI(apiProduct) {
     image:       primaryImagePath,
   };
 }
-
-// ── Price helpers ────────────────────────────────────────────
-
-const parsePrice = (value) => {
-  if (!value || typeof value !== 'string') return null;
-  if (value.toLowerCase().includes('devis')) return null;
-  const digits = value.replace(/[^\d]/g, '');
-  if (!digits) return null;
-  return Number(digits);
-};
-
-const formatPrice = (value) => {
-  return new Intl.NumberFormat('fr-FR').format(value) + ' €';
-};
 
 // ── DOM refs ─────────────────────────────────────────────────
 
@@ -143,12 +139,11 @@ const render = async () => {
       const apiProduct = await response.json();
       const product    = adaptProductFromAPI(apiProduct);
 
-      // Accumulate total
-      const price = parsePrice(product.price);
-      if (price === null) {
-        hasDevis = true;
+      // Accumulate total using rawPrice (already a clean number)
+      if (product.rawPrice && product.rawPrice > 0) {
+        total += product.rawPrice;
       } else {
-        total += price;
+        hasDevis = true;
       }
 
       const card = document.createElement('div');
@@ -167,17 +162,14 @@ const render = async () => {
         </div>
       `;
 
-      // Navigate to product page on image click
       card.querySelector('img').addEventListener('click', () => {
         window.location.href = `produit.html?id=${product.id}`;
       });
 
-      // Navigate to product page on Voir click
       card.querySelector('.btn-view').addEventListener('click', () => {
         window.location.href = `produit.html?id=${product.id}`;
       });
 
-      // Remove from cart
       card.querySelector('.btn-remove').addEventListener('click', () => {
         removeItem(STORAGE_KEYS.cart, product.id);
         render();
@@ -199,5 +191,4 @@ const render = async () => {
   localStorage.setItem('lacasa_order_count', String(ids.length));
 };
 
-// Initial render on page load
 render();

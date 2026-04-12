@@ -15,12 +15,12 @@ let currentSort = "alphabetical";
 const PRODUCT_IMAGES = {
   Porsche: {
     "718 Spyder RS": "../assets/img/porsche/colours/Sport/718 Spyder RS/718 Spyder RS Argent.webp",
-    "911 Carrera RS": "../assets/img/porsche/colours/Sport/911 Carrera RS/911 Carrera RS Argent.jpg",
+    "911 Carrera RS": "../assets/img/porsche/colours/Sport/911 Carrera RS/911 Carrera RS Rouge.jpg",
     "Panamera": "../assets/img/porsche/colours/Classic/Panamera/Panamera Blanc.jpg",
     "Cayenne E-Hybrid": "../assets/img/porsche/colours/SUV/Cayenne E-Hybrid/Cayenne E-Hybrid Blanc.jpg",
     "Cayenne Electric": "../assets/img/porsche/colours/Electrique/Cayenne Electric/Cayenne Electric Gris.jpg",
     "Macan": "../assets/img/porsche/colours/SUV/Macan/Macan Orange.jpg",
-    "Taycan Turbo GT": "../assets/img/porsche/colours/Electrique/Taycan Turbo GT/Taycan Turbo GT Bleu.jpg",
+    "Taycan Turbo GT": "../assets/img/porsche/colours/Electrique/Taycan Turbo GT/Taycan Turbo GT Bleu Metal.jpg",
     "718 Cayman GT4 RS": "../assets/img/porsche/colours/Super Sport/718 Cayman GT4 RS/718 Cayman GT4 RS Argent.webp",
     "911 GT3": "../assets/img/porsche/colours/Super Sport/911 GT3/911 GT3 Jaune.jpg",
     "911 Turbo S": "../assets/img/porsche/colours/Super Sport/911 Turbo S/911 Turbo S Argent.jpg"
