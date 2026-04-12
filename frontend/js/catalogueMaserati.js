@@ -7,225 +7,181 @@ const catalogueSearchInput = document.getElementById("catalogueSearchInput");
 const sortSelect = document.getElementById("sortSelect");
 
 let cards = [];
-let allProducts = [];
 let currentFilter = "all";
 let currentSearch = "";
 let currentSort = "alphabetical";
 
-// Function to create a card element from product data
+// Table de correspondance des images côté front
+const PRODUCT_IMAGES = {
+  Porsche: {
+    "718 Spyder RS": "../assets/img/porsche/colours/Sport/718 Spyder RS/718 Spyder RS.jpg",
+    "911 Carrera RS": "../assets/img/porsche/colours/Sport/911 Carrera RS/911 Carrera RS.jpg",
+    "Panamera": "../assets/img/porsche/colours/Classic/Panamera/Panamera Bleu.jpg",
+    "Cayenne E-Hybrid": "../assets/img/porsche/colours/SUV/Cayenne E-Hybrid/Cayenne E-Hybrid.jpg",
+    "Cayenne Electric": "../assets/img/porsche/colours/Electrique/Cayenne Electric/Cayenne Electric.jpg",
+    "Macan": "../assets/img/porsche/colours/SUV/Macan/Macan Orange.jpg",
+    "Taycan Turbo GT": "../assets/img/porsche/colours/Electrique/Taycan Turbo GT/Taycan Turbo GT Bleu.jpg",
+    "718 Cayman GT4 RS": "../assets/img/porsche/colours/Super Sport/718 Cayman GT4 RS/718 Cayman GT4 RS.jpg",
+    "911 GT3": "../assets/img/porsche/colours/Super Sport/911 GT3/911 GT3 Jaune.jpg",
+    "911 Turbo S": "../assets/img/porsche/colours/Super Sport/911 Turbo S/911 Turbo S.jpg"
+  },
+  Maserati: {
+    "Granturismo Folgore": "../assets/img/maserati/Éléctrique/GRANTURISMO_FOLGORE/GRANTURISMO_FOLGORE_AVANT_NOIR.jpg",
+    "Grecale Folgore": "../assets/img/maserati/Éléctrique/GRECALE_FOLGORE/GRECALE_FOLGORE_AVANT_NOIR.jpg",
+    "Gran Turismo": "../assets/img/maserati/Sport/GRAN_TURISMO/GRAN_TURISMO_AVANT_NOIR.jpg",
+    "Trofeo": "../assets/img/maserati/Sport/TROFEO/TROFEO_AVANT_NOIR.jpg",
+    "Grancabrio": "../assets/img/maserati/Sport Cabrio/GRANCABRIO/GRANCABRIO_AVANT_OR.jpg",
+    "Grancabrio Trofeo": "../assets/img/maserati/Sport Cabrio/GRANCABRIO TROFEO/GRANCABRIO_TROFEO_AVANT_NOIR.jpg",
+    "GT2 Stradale": "../assets/img/maserati/Super Sport/GT2_STRADALE/GT2_STRADALE_AVANT_NOIR.jpg",
+    "MCPura": "../assets/img/maserati/Super Sport/MCPURA/MCPURA_AVANT_NOIR.jpg",
+    "Grecale": "../assets/img/maserati/SUV/GRECALE/GRECALE_AVANT_NOIR.jpg",
+    "Grecale Modena": "../assets/img/maserati/SUV/GRECALE MODENA/GRECALE_MODENA_AVANT_NOIR.jpg"
+  }
+};
+
+function getImageByProduct(product) {
+  return PRODUCT_IMAGES[product.marque]?.[product.nom] || "../assets/img/logos/Red%20car%20house%20emblem%20logo.png";
+}
+
 function createCard(product) {
-    const card = document.createElement('article');
-    card.className = 'card';
-    card.setAttribute('data-category', product.categorie_nom || 'Unknown');
+  const card = document.createElement("article");
+  card.className = "card";
+  card.setAttribute("data-category", product.categorie_nom || "Unknown");
+  card.setAttribute("data-price", product.prix);
 
-    // Assume image path based on marque, categorie_nom, nom
-    const modelName = product.ref.replace('Réf. ', '').replace('/', '_').toUpperCase();
-    const modelFolder = product.nom.replace(new RegExp(`^${product.marque}\\s+`, 'i'), '');
-    const color = product.couleur_principale || 'Noir';
-    let imagePath;
-    if (product.marque === 'Maserati') {
-        const colorUpper = color.toUpperCase();
-        imagePath = `../assets/img/maserati/${product.categorie_nom}/${modelName}/${modelName}_AVANT_${colorUpper}.jpg`;
-    } else if (product.marque === 'Porsche') {
-        imagePath = `../assets/img/porsche/colours/${product.categorie_nom}/${modelFolder}/${color}.jpg`;
-    } else {
-        imagePath = '../assets/img/maserati/Maserati-index.png';
-    }
-    // Fallback to a default image if not found
-    const fallbackImage = '../assets/img/maserati/Maserati-index.png'; // or some placeholder
+  const imagePath = getImageByProduct(product);
 
-    card.innerHTML = `
-        <a href="produit.html?id=${product.id}" class="card-link" aria-label="Voir le produit ${product.nom}">
-            <div class="card-media">
-                <img src="${imagePath}" alt="${product.nom}" onerror="this.src='${fallbackImage}'" />
-                <span class="card-badge">${product.categorie_nom || 'N/A'}</span>
-            </div>
-            <div class="card-body">
-                <h3>${product.nom}</h3>
-                <p>${product.description}</p>
-                <div class="card-specs">
-                    <span class="spec">${product.couleur_principale || 'N/A'}</span>
-                    <span class="spec">${product.prix} €</span>
-                    <span class="spec">Stock: ${product.stock}</span>
-                </div>
-                <div class="card-footer">
-                    <span>Découvrir</span>
-                    <span>${product.ref}</span>
-                </div>
-            </div>
-        </a>
-    `;
+  card.innerHTML = `
+    <a href="produit.html?id=${product.id}" class="card-link" aria-label="Voir le produit ${product.nom}">
+      <div class="card-media">
+        <img src="${imagePath}" alt="${product.nom}" />
+        <span class="card-badge">${product.categorie_nom || "N/A"}</span>
+      </div>
+      <div class="card-body">
+        <h3>${product.nom}</h3>
+        <p>${product.description}</p>
+        <div class="card-specs">
+          <span class="spec">${product.couleur_principale || "N/A"}</span>
+          <span class="spec">${Number(product.prix).toLocaleString("fr-FR")} €</span>
+          <span class="spec">Stock: ${product.stock}</span>
+        </div>
+        <div class="card-footer">
+          <span>Découvrir</span>
+          <span>${product.ref}</span>
+        </div>
+      </div>
+    </a>
+  `;
 
-    return card;
+  return card;
 }
 
-// Fetch products from API
 async function fetchProducts() {
-    const marque = document.title.includes('Maserati') ? 'Maserati' : 'Porsche';
-    const urlParams = new URLSearchParams(window.location.search);
-    const searchQuery = urlParams.get('search');
+  const marque = document.title.includes("Maserati") ? "Maserati" : "Porsche";
 
-    let apiUrl = `http://localhost:3000/api/produits?marque=${marque}`;
-    if (searchQuery) {
-        apiUrl += `&search=${encodeURIComponent(searchQuery)}`;
-    }
+  try {
+    const response = await fetch(`http://localhost:3000/api/produits?marque=${marque}`);
+    if (!response.ok) throw new Error("Erreur API");
 
-    try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) throw new Error('Failed to fetch products');
-        const products = await response.json();
+    const products = await response.json();
 
-        // Clear existing cards
-        allCarsGrid.innerHTML = '';
+    allCarsGrid.innerHTML = "";
+    cards = products.map(createCard);
+    cards.forEach(card => allCarsGrid.appendChild(card));
 
-        // Create and append cards
-        cards = products.map(createCard);
-        cards.forEach(card => allCarsGrid.appendChild(card));
-
-        // Update filter options if needed
-        updateFilterOptions();
-
-        // Show search results message if searching
-        if (searchQuery) {
-            const resultsCount = products.length;
-            const searchMessage = document.createElement('div');
-            searchMessage.className = 'search-results-message';
-            searchMessage.style.cssText = `
-                margin-bottom: 20px;
-                padding: 12px 16px;
-                background: #f8f9fa;
-                border-radius: 4px;
-                border-left: 4px solid #1b2330;
-            `;
-            searchMessage.innerHTML = `
-                <strong>Résultats pour "${searchQuery}"</strong> - ${resultsCount} produit${resultsCount !== 1 ? 's' : ''} trouvé${resultsCount !== 1 ? 's' : ''}
-            `;
-
-            // Insert before the grid
-            allCarsGrid.parentElement.insertBefore(searchMessage, allCarsGrid);
-        }
-    } catch (error) {
-        console.error('Error fetching products:', error);
-        allCarsGrid.innerHTML = '<p>Erreur lors du chargement des produits.</p>';
-    }
+    applyFiltersAndSort();
+  } catch (error) {
+    console.error("Erreur chargement produits :", error);
+    allCarsGrid.innerHTML = "<p>Erreur lors du chargement des produits.</p>";
+  }
 }
 
-// Update filter options based on available categories
-function updateFilterOptions() {
-    const categories = [...new Set(cards.map(card => card.dataset.category))];
-    // For now, keep the existing filters, but could dynamically add if needed
-}
-
-// Sort products based on current sort selection
 function sortProducts(productsToSort) {
-    const sorted = [...productsToSort];
-    
-    if (currentSort === "alphabetical") {
-        sorted.sort((a, b) => {
-            const nameA = a.querySelector("h3").textContent.toLowerCase();
-            const nameB = b.querySelector("h3").textContent.toLowerCase();
-            return nameA.localeCompare(nameB);
-        });
-    } else if (currentSort === "price-asc") {
-        sorted.sort((a, b) => {
-            const priceA = parseInt(a.querySelector(".card-specs span:nth-child(2)").textContent);
-            const priceB = parseInt(b.querySelector(".card-specs span:nth-child(2)").textContent);
-            return priceA - priceB;
-        });
-    } else if (currentSort === "price-desc") {
-        sorted.sort((a, b) => {
-            const priceA = parseInt(a.querySelector(".card-specs span:nth-child(2)").textContent);
-            const priceB = parseInt(b.querySelector(".card-specs span:nth-child(2)").textContent);
-            return priceB - priceA;
-        });
-    }
-    
-    return sorted;
-}
+  const sorted = [...productsToSort];
 
-// Update displayed products based on all filters (category, search, sort)
-function applyFiltersAndSort() {
-    let filtered = cards.filter(card => {
-        // Apply category filter
-        const matchesCategory = currentFilter === "all" || card.dataset.category === currentFilter;
-        
-        // Apply search filter
-        let matchesSearch = true;
-        if (currentSearch) {
-            const cardText = card.textContent.toLowerCase();
-            matchesSearch = cardText.includes(currentSearch.toLowerCase());
-        }
-        
-        return matchesCategory && matchesSearch;
+  if (currentSort === "alphabetical") {
+    sorted.sort((a, b) => {
+      const nameA = a.querySelector("h3").textContent.toLowerCase();
+      const nameB = b.querySelector("h3").textContent.toLowerCase();
+      return nameA.localeCompare(nameB);
     });
-    
-    // Sort the filtered results
-    filtered = sortProducts(filtered);
-    
-    // Update display
-    cards.forEach(card => card.classList.add("is-hidden"));
-    filtered.forEach(card => card.classList.remove("is-hidden"));
+  } else if (currentSort === "price-asc") {
+    sorted.sort((a, b) => Number(a.dataset.price) - Number(b.dataset.price));
+  } else if (currentSort === "price-desc") {
+    sorted.sort((a, b) => Number(b.dataset.price) - Number(a.dataset.price));
+  }
+
+  return sorted;
 }
 
-// Update filter options based on available categories
-function updateFilterOptions() {
-    const categories = [...new Set(cards.map(card => card.dataset.category))];
-    // For now, keep the existing filters, but could dynamically add if needed
+function applyFiltersAndSort() {
+  let filtered = cards.filter(card => {
+    const matchesCategory = currentFilter === "all" || card.dataset.category === currentFilter;
+    const matchesSearch = !currentSearch || card.textContent.toLowerCase().includes(currentSearch.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  filtered = sortProducts(filtered);
+
+  allCarsGrid.innerHTML = "";
+  filtered.forEach(card => allCarsGrid.appendChild(card));
 }
 
-// Apply the selected filter to cards and update UI state.
 const setFilter = (value, label) => {
   currentFilter = value;
-  filterOptions.forEach((btn) => btn.classList.toggle("active", btn.dataset.filter === value));
-  filterToggle.textContent = label || value;
-  filterToggle.setAttribute("aria-expanded", "false");
-  filterPanel.classList.remove("open");
-  filterPanel.setAttribute("aria-hidden", "true");
+  filterOptions.forEach(btn => btn.classList.toggle("active", btn.dataset.filter === value));
+  if (filterToggle) {
+    filterToggle.textContent = label || value;
+    filterToggle.setAttribute("aria-expanded", "false");
+  }
+  if (filterPanel) {
+    filterPanel.classList.remove("open");
+    filterPanel.setAttribute("aria-hidden", "true");
+  }
   applyFiltersAndSort();
 };
 
-// Toggle the filter dropdown panel.
-filterToggle.addEventListener("click", () => {
-  const isOpen = filterPanel.classList.toggle("open");
-  filterToggle.setAttribute("aria-expanded", String(isOpen));
-  filterPanel.setAttribute("aria-hidden", String(!isOpen));
-});
+if (filterToggle && filterPanel) {
+  filterToggle.addEventListener("click", () => {
+    const isOpen = filterPanel.classList.toggle("open");
+    filterToggle.setAttribute("aria-expanded", String(isOpen));
+    filterPanel.setAttribute("aria-hidden", String(!isOpen));
+  });
+}
 
 filterOptions.forEach((btn) => {
-  // Apply the clicked filter option.
   btn.addEventListener("click", () => {
     const value = btn.dataset.filter;
     setFilter(value, btn.textContent.trim());
   });
 });
 
-// Close the panel when clicking outside of it.
 document.addEventListener("click", (event) => {
-  if (!filterPanel.contains(event.target) && event.target !== filterToggle) {
+  if (filterPanel && filterToggle && !filterPanel.contains(event.target) && event.target !== filterToggle) {
     filterPanel.classList.remove("open");
     filterToggle.setAttribute("aria-expanded", "false");
     filterPanel.setAttribute("aria-hidden", "true");
   }
 });
 
-// Handle search form submission
-catalogueSearch.addEventListener("submit", (e) => {
-  e.preventDefault();
-  currentSearch = catalogueSearchInput.value.trim();
-  applyFiltersAndSort();
-});
+if (catalogueSearch && catalogueSearchInput) {
+  catalogueSearch.addEventListener("submit", (e) => {
+    e.preventDefault();
+    currentSearch = catalogueSearchInput.value.trim();
+    applyFiltersAndSort();
+  });
 
-// Handle search input change (live search)
-catalogueSearchInput.addEventListener("input", (e) => {
-  currentSearch = e.target.value.trim();
-  applyFiltersAndSort();
-});
+  catalogueSearchInput.addEventListener("input", (e) => {
+    currentSearch = e.target.value.trim();
+    applyFiltersAndSort();
+  });
+}
 
-// Handle sort selection change
-sortSelect.addEventListener("change", (e) => {
-  currentSort = e.target.value;
-  applyFiltersAndSort();
-});
+if (sortSelect) {
+  sortSelect.addEventListener("change", (e) => {
+    currentSort = e.target.value;
+    applyFiltersAndSort();
+  });
+}
 
-// Load products on page load
-document.addEventListener('DOMContentLoaded', fetchProducts);
+document.addEventListener("DOMContentLoaded", fetchProducts);

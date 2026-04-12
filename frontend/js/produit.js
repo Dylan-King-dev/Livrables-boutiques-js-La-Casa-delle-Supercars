@@ -48,6 +48,35 @@ const params = new URLSearchParams(window.location.search);
 const productId = params.get("id") || "porsche-gt3rs";
 console.log('productId:', productId);
 
+function normalizePorscheCategory(product) {
+  const byModel = {
+    'Taycan Turbo GT': 'Electrique',
+    'Cayenne E-Hybrid': 'SUV',
+    'Cayenne Electric': 'SUV',
+    'Macan': 'SUV',
+    'Panamera': 'Classic',
+    '911 Carrera RS': 'Sport',
+    '718 Spyder RS': 'Sport',
+    '718 Cayman GT4 RS': 'Super Sport',
+    '911 GT3': 'Super Sport',
+    '911 Turbo S': 'Super Sport',
+  };
+
+  return byModel[product.nom] || product.categorie_nom;
+}
+
+function normalizePorscheColor(color) {
+  const map = {
+    'Bleu Metal': 'Bleu metal',
+    'Vert': 'Oak Green',
+    'Marron': 'Burgundy',
+    'Jaune': 'Speedyellow',
+    'Gris': 'gris',
+  };
+
+  return map[color] || color;
+}
+
 function getImagePath(product) {
     const modelName = product.ref.replace('Réf. ', '').replace('/', '_').toUpperCase();
     const color = product.couleur_principale || 'Noir';
@@ -56,7 +85,9 @@ function getImagePath(product) {
         return `../assets/img/maserati/${product.categorie_nom}/${modelName}/${modelName}_AVANT_${colorUpper}.jpg`;
     } else if (product.marque === 'Porsche') {
         const modelFolder = product.nom.replace(new RegExp(`^${product.marque}\\s+`, 'i'), '');
-        return `../assets/img/porsche/colours/${product.categorie_nom}/${modelFolder}/${color}.jpg`;
+    const category = normalizePorscheCategory(product);
+    const normalizedColor = normalizePorscheColor(color);
+    return `../assets/img/porsche/colours/${category}/${modelFolder}/${normalizedColor}.jpg`;
     } else {
         return '../assets/img/maserati/Maserati-index.png';
     }
@@ -69,7 +100,9 @@ function getSwatchPath(apiProduct, color) {
         return `../assets/img/maserati/${apiProduct.categorie_nom}/${modelName}/icon/menu_icon_${swatchColor}.jpg`;
     } else if (apiProduct.marque === 'Porsche') {
         const modelFolder = apiProduct.nom.replace(new RegExp(`^${apiProduct.marque}\\s+`, 'i'), '');
-        return `../assets/img/porsche/colours/${apiProduct.categorie_nom}/${modelFolder}/${color}.jpg`;
+    const category = normalizePorscheCategory(apiProduct);
+    const normalizedColor = normalizePorscheColor(color);
+    return `../assets/img/porsche/colours/${category}/${modelFolder}/${normalizedColor}.jpg`;
     } else {
         return '../assets/img/maserati/Maserati-index.png';
     }
