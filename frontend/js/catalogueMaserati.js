@@ -74,8 +74,8 @@
       hover: "../assets/img/maserati/Sport/TROFEO/TROFEO_AVANT_ORANGE.jpg"
     },
     "Grancabrio": {
-      main: "../assets/img/maserati/Sport Cabrio/GRANCABRIO/GRANCABRIO_AVANT_OR.jpg",
-      hover: "../assets/img/maserati/Sport Cabrio/GRANCABRIO/GRANCABRIO_AVANT_NOIR.jpg"
+      main: "../assets/img/maserati/Sport Cabrio/GRANCABRIO/GRANCABRIO_AVANT_NOIR.jpg",
+      hover: "../assets/img/maserati/Sport Cabrio/GRANCABRIO/GRANCABRIO_AVANT_OR.jpg"
     },
     "Grancabrio Trofeo": {
       main: "../assets/img/maserati/Sport Cabrio/GRANCABRIO TROFEO/GRANCABRIO_TROFEO_AVANT_NOIR.jpg",
