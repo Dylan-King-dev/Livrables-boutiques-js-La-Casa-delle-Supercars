@@ -473,7 +473,7 @@ function initializePage() {
 
     console.log('stock:', product.stock, 'alreadyInCart:', alreadyInCart, 'qtyToAdd:', qtyToAdd);
 
-    // ❌ Out of stock OR already max
+    // Out of stock OR already max
     if (product.stock === 0 || alreadyInCart >= product.stock) {
       const msg = "Rupture de stock";
       const detail = `${product.name} n'est plus disponible.`;
