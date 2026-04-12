@@ -52,7 +52,7 @@ function normalizePorscheCategory(product) {
   const byModel = {
     'Taycan Turbo GT': 'Electrique',
     'Cayenne E-Hybrid': 'SUV',
-    'Cayenne Electric': 'SUV',
+    'Cayenne Electric': 'Electrique',
     'Macan': 'SUV',
     'Panamera': 'Classic',
     '911 Carrera RS': 'Sport',
@@ -62,47 +62,39 @@ function normalizePorscheCategory(product) {
     '911 Turbo S': 'Super Sport',
   };
 
-  return byModel[product.nom] || product.categorie_nom;
+  return byModel[product.nom] || product.categorie_nom || 'Sport';
 }
 
-function normalizePorscheColor(color) {
-  const map = {
-    'Bleu Metal': 'Bleu metal',
-    'Vert': 'Oak Green',
-    'Marron': 'Burgundy',
-    'Jaune': 'Speedyellow',
-    'Gris': 'gris',
-  };
-
-  return map[color] || color;
-}
+// Removed normalizePorscheColor - use raw DB colors directly
 
 function getImagePath(product) {
-    const modelName = product.ref.replace('Réf. ', '').replace('/', '_').toUpperCase();
     const color = product.couleur_principale || 'Noir';
+    const modelFolder = product.nom.replace(new RegExp(`^${product.marque || ''}\\s+`, 'i'), '').trim();
+    const ext = (modelFolder.includes('GT4 RS') || modelFolder.includes('Spyder RS')) ? '.webp' : '.jpg';
+    
     if (product.marque === 'Maserati') {
+        const modelName = product.nom.toUpperCase().replace(/ /g, '_');
         const colorUpper = color.toUpperCase();
         return `../assets/img/maserati/${product.categorie_nom}/${modelName}/${modelName}_AVANT_${colorUpper}.jpg`;
     } else if (product.marque === 'Porsche') {
-        const modelFolder = product.nom.replace(new RegExp(`^${product.marque}\\s+`, 'i'), '');
-    const category = normalizePorscheCategory(product);
-    const normalizedColor = normalizePorscheColor(color);
-    return `../assets/img/porsche/colours/${category}/${modelFolder}/${normalizedColor}.jpg`;
+        const category = normalizePorscheCategory(product);
+        return `../assets/img/porsche/colours/${category}/${modelFolder}/${modelFolder} ${color}${ext}`;
     } else {
         return '../assets/img/maserati/Maserati-index.png';
     }
 }
 
 function getSwatchPath(apiProduct, color) {
-    const modelName = apiProduct.ref.replace('Réf. ', '').replace('/', '_').toUpperCase();
+    const modelFolder = apiProduct.nom.replace(new RegExp(`^${apiProduct.marque || ''}\\s+`, 'i'), '').trim();
+    const ext = (modelFolder.includes('GT4 RS') || modelFolder.includes('Spyder RS')) ? '.webp' : '.jpg';
+    
     if (apiProduct.marque === 'Maserati') {
-        const swatchColor = color === 'Noir' ? 'NOIR' : color;
+        const modelName = apiProduct.nom.toUpperCase().replace(/ /g, '_');
+        const swatchColor = color.toUpperCase();
         return `../assets/img/maserati/${apiProduct.categorie_nom}/${modelName}/icon/menu_icon_${swatchColor}.jpg`;
     } else if (apiProduct.marque === 'Porsche') {
-        const modelFolder = apiProduct.nom.replace(new RegExp(`^${apiProduct.marque}\\s+`, 'i'), '');
-    const category = normalizePorscheCategory(apiProduct);
-    const normalizedColor = normalizePorscheColor(color);
-    return `../assets/img/porsche/colours/${category}/${modelFolder}/${normalizedColor}.jpg`;
+        const category = normalizePorscheCategory(apiProduct);
+        return `../assets/img/porsche/colours/${category}/${modelFolder}/icon/${color}${ext}`;
     } else {
         return '../assets/img/maserati/Maserati-index.png';
     }
@@ -151,10 +143,10 @@ function adaptProductFromAPI(apiProduct) {
         price: apiProduct.prix + ' €',
         availability: apiProduct.stock > 0 ? 'Disponible' : 'Sur demande',
         specs: {
-            power: 'N/A',
-            zeroTo100: 'N/A',
+            power: apiProduct.puissance + ' ch',
+            zeroTo100: apiProduct.zero_a_cent + ' s',
             drive: 'N/A',
-            edition: 'N/A',
+            edition: apiProduct.ref || 'Signature',
         },
         description: apiProduct.description,
         image: primaryImagePath,
@@ -340,7 +332,7 @@ const updateCarousel = (nextIndex) => {
 };
 
 
-// Remplace les images du carrousel pour la couleur selectionnee.
+// Remplace les images du carrousel for la couleur selectionnee.
 const setSlides = (images, label) => {
   const resolved = images.map((src) => src || product.image);
   const band = resolved.concat(resolved);
@@ -382,7 +374,7 @@ const setSlides = (images, label) => {
 const renderColors = () => {
   colorOptions.innerHTML = "";
   const colors = product.colors || [{ key: "default", label: "Standard", images: [product.image] }];
-  // Cree un bouton pour chaque couleur disponible.
+  // Cree un bouton for chaque couleur disponible.
   colors.forEach((color, idx) => {
     const btn = document.createElement("button");
     btn.type = "button";
@@ -568,7 +560,7 @@ track.addEventListener("touchmove", (e) => {
   touchDeltaX = e.touches[0].clientX - touchStartX;
 });
 
-track.addEventListener("touchend", () => {
+track.addEventListener("touchend", (e) => {
   if (Math.abs(touchDeltaX) > 40) {
     updateCarousel(touchDeltaX > 0 ? index - 1 : index + 1);
   }
@@ -590,3 +582,4 @@ if (topbar) {
 console.log('About to attach viewer listeners from initializePage');
 attachViewerListeners();
 }
+
