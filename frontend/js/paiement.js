@@ -8,40 +8,54 @@ if (totalEl) {
   totalEl.textContent = localStorage.getItem("lacasa_order_total") || "Sur devis";
 }
 
+// ── Card number formatting ────────────────────────────────────
+const cardNumberInput = document.getElementById("cardNumber");
+if (cardNumberInput) {
+  cardNumberInput.addEventListener("input", function () {
+    let v = this.value.replace(/\D/g, "").slice(0, 16);
+    this.value = v.replace(/(.{4})/g, "$1 ").trim();
+  });
+}
+
+// ── Expiry formatting ─────────────────────────────────────────
+const cardExpiryInput = document.getElementById("cardExpiry");
+if (cardExpiryInput) {
+  cardExpiryInput.addEventListener("input", function () {
+    let v = this.value.replace(/\D/g, "").slice(0, 4);
+    if (v.length >= 3) v = v.slice(0, 2) + "/" + v.slice(2);
+    this.value = v;
+  });
+}
+
 // ── Address autocomplete (French gov API) ────────────────────
 const addressInput = document.getElementById("address");
 const cityInput    = document.getElementById("city");
 const postalInput  = document.getElementById("postal");
 
-if (addressInput) {
-  const suggestionsContainer = document.createElement("div");
-  suggestionsContainer.id = "address-suggestions";
-  suggestionsContainer.style.cssText = `
-    position: absolute;
-    background: white;
-    border: 1px solid #ccc;
-    border-top: none;
-    max-height: 200px;
-    overflow-y: auto;
-    z-index: 1000;
-    width: calc(100% - 2px);
-    display: none;
-  `;
-  addressInput.parentNode.style.position = "relative";
-  addressInput.parentNode.appendChild(suggestionsContainer);
+// The suggestions container already exists in the HTML inside .field
+const suggestionsContainer = document.getElementById("address-suggestions");
 
+if (addressInput && suggestionsContainer) {
   let debounceTimer;
 
   addressInput.addEventListener("input", function () {
     clearTimeout(debounceTimer);
     const query = this.value.trim();
-    if (query.length < 3) { suggestionsContainer.style.display = "none"; return; }
+    if (query.length < 3) {
+      hideSuggestions();
+      return;
+    }
     debounceTimer = setTimeout(() => fetchSuggestions(query), 300);
   });
 
   addressInput.addEventListener("blur", function () {
-    setTimeout(() => suggestionsContainer.style.display = "none", 150);
+    setTimeout(hideSuggestions, 180);
   });
+
+  function hideSuggestions() {
+    suggestionsContainer.classList.remove("visible");
+    suggestionsContainer.innerHTML = "";
+  }
 
   function fetchSuggestions(query) {
     fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&limit=5`)
@@ -51,24 +65,27 @@ if (addressInput) {
         if (data.features?.length) {
           data.features.forEach(feature => {
             const div = document.createElement("div");
+            div.className = "suggestion-item";
             div.textContent = feature.properties.label;
-            div.style.cssText = "padding:8px;cursor:pointer;border-bottom:1px solid #eee;";
-            div.addEventListener("mousedown", () => selectSuggestion(feature.properties));
+            div.addEventListener("mousedown", (e) => {
+              e.preventDefault(); // prevent blur from firing before click
+              selectSuggestion(feature.properties);
+            });
             suggestionsContainer.appendChild(div);
           });
-          suggestionsContainer.style.display = "block";
+          suggestionsContainer.classList.add("visible");
         } else {
-          suggestionsContainer.style.display = "none";
+          hideSuggestions();
         }
       })
-      .catch(() => { suggestionsContainer.style.display = "none"; });
+      .catch(() => hideSuggestions());
   }
 
   function selectSuggestion(props) {
     addressInput.value = props.name || props.label.split(", ")[0];
     if (cityInput)   cityInput.value   = props.city     || "";
     if (postalInput) postalInput.value = props.postcode || "";
-    suggestionsContainer.style.display = "none";
+    hideSuggestions();
     clearError(addressInput);
     clearError(cityInput);
     clearError(postalInput);
@@ -95,7 +112,6 @@ function clearError(input) {
   if (err) err.remove();
 }
 
-// Clear error on user input
 ["cardName","cardNumber","cardExpiry","cardCvc","address","city","postal"].forEach(id => {
   const el = document.getElementById(id);
   if (el) el.addEventListener("input", () => clearError(el));
@@ -168,7 +184,6 @@ async function decrementStock() {
   const ids = JSON.parse(localStorage.getItem("lacasa_cart") || "[]");
   if (!ids.length) return;
 
-  // Count occurrences (same product added multiple times)
   const counts = {};
   ids.forEach(id => { counts[id] = (counts[id] || 0) + 1; });
 
@@ -186,7 +201,6 @@ async function decrementStock() {
 // ── Success screen ───────────────────────────────────────────
 
 function showSuccess() {
-  // Clear cart data
   localStorage.removeItem("lacasa_cart");
   localStorage.removeItem("lacasa_order_total");
   localStorage.removeItem("lacasa_order_count");
@@ -197,7 +211,7 @@ function showSuccess() {
     <div class="success-box">
       <div class="success-icon">
         <svg viewBox="0 0 52 52" width="64" height="64">
-          <circle cx="26" cy="26" r="25" fill="none" stroke="#c9a96e" stroke-width="2"/>
+          <circle cx="26" cy="26" r="25" fill="none" stroke="#c9a96e" stroke-width="1.5"/>
           <path d="M14 27 l8 8 l16-16" fill="none" stroke="#c9a96e" stroke-width="2.5"
                 stroke-linecap="round" stroke-linejoin="round"
                 class="checkmark-path"/>
@@ -209,31 +223,30 @@ function showSuccess() {
     </div>
   `;
 
-  // Inline styles so it works without touching paiement.css
   overlay.style.cssText = `
     position: fixed; inset: 0;
-    background: rgba(10,10,10,.85);
-    backdrop-filter: blur(6px);
+    background: rgba(10,10,10,.88);
+    backdrop-filter: blur(8px);
     display: flex; align-items: center; justify-content: center;
     z-index: 9999;
-    animation: fadeIn .35s ease;
+    animation: fadeIn .3s ease;
   `;
 
   const style = document.createElement("style");
   style.textContent = `
     @keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
-    @keyframes slideUp { from { opacity:0; transform:translateY(24px) } to { opacity:1; transform:translateY(0) } }
+    @keyframes slideUp { from { opacity:0; transform:translateY(20px) } to { opacity:1; transform:translateY(0) } }
     @keyframes drawCheck { to { stroke-dashoffset: 0 } }
 
     #successOverlay .success-box {
       background: #0e0e0e;
-      border: 1px solid #2a2a2a;
-      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
       padding: 56px 48px;
       text-align: center;
       max-width: 420px;
       width: 90%;
-      animation: slideUp .45s ease .1s both;
+      animation: slideUp .4s ease .1s both;
     }
     #successOverlay .success-icon { margin-bottom: 28px; }
     #successOverlay .checkmark-path {
@@ -251,39 +264,26 @@ function showSuccess() {
     }
     #successOverlay p {
       font-family: 'Source Sans 3', sans-serif;
-      color: #888;
+      color: #666;
       font-size: .95rem;
-      line-height: 1.6;
+      line-height: 1.7;
       margin: 0 0 36px;
     }
     #successOverlay .btn-home {
       display: inline-block;
-      padding: 12px 32px;
+      padding: 14px 36px;
       background: #c9a96e;
       color: #0e0e0e;
       font-family: 'Source Sans 3', sans-serif;
       font-weight: 600;
-      font-size: .875rem;
-      letter-spacing: .08em;
+      font-size: .8rem;
+      letter-spacing: .12em;
       text-transform: uppercase;
       text-decoration: none;
-      border-radius: 2px;
+      border-radius: 999px;
       transition: background .2s;
     }
     #successOverlay .btn-home:hover { background: #b8944f; }
-
-    /* Validation styles */
-    .input-error {
-      border-color: #e05252 !important;
-      outline-color: #e05252 !important;
-    }
-    .field-error {
-      display: block;
-      margin-top: 4px;
-      font-size: .78rem;
-      color: #e05252;
-      font-family: 'Source Sans 3', sans-serif;
-    }
   `;
   document.head.appendChild(style);
   document.body.appendChild(overlay);
@@ -291,7 +291,7 @@ function showSuccess() {
 
 // ── Pay button ───────────────────────────────────────────────
 
-const payBtn = document.querySelector(".btn[type='button']");
+const payBtn = document.querySelector(".btn-pay");
 if (payBtn) {
   payBtn.addEventListener("click", async () => {
     if (!validateFields()) return;
@@ -303,7 +303,6 @@ if (payBtn) {
       await decrementStock();
     } catch (e) {
       console.error("Stock decrement error:", e);
-      // Non-blocking — still show success even if API fails
     }
 
     showSuccess();
