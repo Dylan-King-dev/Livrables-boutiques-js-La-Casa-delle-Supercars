@@ -98,70 +98,6 @@ Le projet a été développé en binôme dans le cadre du module Challenge JS. I
 
 ---
 
-## 📁 Arborescence du projet
-
-```
-La-Casa-delle-Supercars/
-├── frontend/
-│   ├── pages/
-│   │   ├── index.html          ← Page d'accueil
-│   │   ├── catalogue.html      ← Liste des produits
-│   │   ├── produit.html        ← Fiche produit
-│   │   ├── panier.html         ← Panier d'achat
-│   │   ├── favoris.html        ← Liste des favoris
-│   │   ├── livraison.html      ← Adresse de livraison
-│   │   └── paiement.html       ← Simulation paiement (bonus)
-│   ├── assets/
-│   │   ├── css/
-│   │   │   ├── main.css        ← Styles globaux
-│   │   │   ├── catalogue.css
-│   │   │   └── produit.css
-│   │   └── img/
-│   │       ├── maserati/       ← 2-3 images par produit Maserati
-│   │       └── porsche/        ← 2-3 images par produit Porsche
-│   └── js/
-│       ├── api.js              ← Fonctions fetch réutilisables
-│       ├── catalogue.js        ← Affichage, filtres, tri, recherche
-│       ├── produit.js          ← Fiche produit, carrousel, panier
-│       ├── panier.js           ← CRUD panier + localStorage
-│       ├── favoris.js          ← Gestion favoris + localStorage
-│       ├── carousel.js         ← Logique carrousel d'images
-│       ├── livraison.js        ← Adresse + localStorage
-│       └── paiement.js         ← Simulation paiement (bonus)
-│
-├── backend/
-│   ├── routes/
-│   │   ├── produits.js         ← GET /produits, GET /produits/:id
-│   │   ├── panier.js           ← POST/PUT/DELETE /panier
-│   │   ├── favoris.js          ← GET/POST/DELETE /favoris
-│   │   ├── commandes.js        ← POST /commandes
-│   │   └── livraison.js        ← GET/POST /livraison
-│   ├── controllers/
-│   │   ├── produitCtrl.js
-│   │   ├── panierCtrl.js
-│   │   ├── favorisCtrl.js
-│   │   ├── commandeCtrl.js
-│   │   └── stockCtrl.js
-│   ├── models/
-│   │   ├── Produit.js
-│   │   ├── Commande.js
-│   │   ├── Panier.js
-│   │   └── Livraison.js
-│   ├── app.js                  ← Point d'entrée Express
-│   ├── db.js                   ← Connexion MySQL
-│   ├── .env                    ← ⚠️ Ne jamais commiter ce fichier
-│   └── package.json
-│
-├── docs/
-│   ├── schema.sql              ← Script de création des tables
-│   └── slides/                 ← Présentation orale
-│
-├── .gitignore
-└── README.md
-```
-
----
-
 ## 🚀 Installation et lancement
 
 ### Prérequis
@@ -195,9 +131,10 @@ DB_NAME=boutique_auto
 PORT=3000
 ```
 
+
 **4. Créer la base de données**
 ```bash
-mysql -u root -p < docs/schema.sql
+mysql -u root -p < docs/boutique_auto_setup.sql
 ```
 
 **5. Lancer le serveur backend**
@@ -214,55 +151,7 @@ Ouvrir `frontend/pages/index.html` dans votre navigateur, ou utiliser l'extensio
 
 ## 🗄️ Configuration de la base de données
 
-Le fichier `docs/schema.sql` contient le script complet de création des tables. Voici la structure principale :
-
-
-(A modifier mais ici un exemple de structure possible)
-```sql
--- Catégories (Maserati, Porsche)
-CREATE TABLE categories (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  nom VARCHAR(100) NOT NULL
-);
-
--- Produits
-CREATE TABLE produits (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  ref VARCHAR(50) UNIQUE NOT NULL,
-  nom VARCHAR(255) NOT NULL,
-  description TEXT NOT NULL,
-  prix DECIMAL(10,2) NOT NULL,
-  reduction INT DEFAULT 0,
-  devise VARCHAR(10) DEFAULT 'EUR',
-  stock INT NOT NULL,
-  marque ENUM('Maserati', 'Porsche') NOT NULL,
-  couleurs JSON,
-  tailles JSON,
-  images JSON,
-  categorie_id INT,
-  FOREIGN KEY (categorie_id) REFERENCES categories(id)
-);
-
--- Commandes
-CREATE TABLE commandes (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  adresse_livraison TEXT,
-  total DECIMAL(10,2),
-  statut VARCHAR(50) DEFAULT 'en attente',
-  date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Lignes de commande
-CREATE TABLE commande_items (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  commande_id INT,
-  produit_id INT,
-  quantite INT,
-  couleur_choisie VARCHAR(50),
-  FOREIGN KEY (commande_id) REFERENCES commandes(id),
-  FOREIGN KEY (produit_id) REFERENCES produits(id)
-);
-```
+Le fichier `docs/boutique_auto_setup.sql` contient le script complet de création des tables. Voici la structure principale :
 
 ---
 
@@ -289,16 +178,16 @@ Voici les variables nécessaires :
 | Tâche | Responsable |
 |-------|-------------|
 | Structure HTML / CSS global + responsive | King Dylan |
-| Page catalogue (affichage, filtres, tri, recherche) | A completer |
-| Page fiche produit + carrousel | A completer |
-| Backend Express + routes API | A completer |
-| Base de données MySQL + schéma | A completer |
-| Panier (frontend + backend) | A completer |
-| Favoris + Livraison | A completer |
-| Gestion des stocks et promotions | A completer |
-| Bonus : Recherche + Paiement | A completer |
-| README + Documentation | A completer |
-| Slides de présentation | A completer |
+| Page catalogue (affichage, filtres, tri, recherche) | King Dylan |
+| Page fiche produit + carrousel | King Dylan |
+| Backend Express + routes API | Azria Florian |
+| Base de données MySQL + schéma | Azria Florian |
+| Panier (frontend + backend) | King Dylan |
+| Favoris + Livraison | King Dylan |
+| Gestion des stocks et promotions | King Dylan + Azria Florian |
+| Bonus : Recherche + Paiement | King Dylan |
+| README + Documentation | King Dylan + Azria Florian |
+| Slides de présentation | King Dylan |
 
 ### Outils de communication et gestion de projet
 
