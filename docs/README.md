@@ -126,9 +126,8 @@ Créer un fichier `.env` dans le dossier `backend/` :
 ```
 DB_HOST=localhost
 DB_USER=root
-DB_PASS=votre_mot_de_passe
+DB_PASS=
 DB_NAME=boutique_auto
-PORT=3000
 ```
 
 
