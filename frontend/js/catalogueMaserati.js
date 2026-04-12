@@ -15,7 +15,7 @@ let currentSort = "alphabetical";
 const PRODUCT_IMAGES = {
   Porsche: {
     "718 Spyder RS": "../assets/img/porsche/colours/Sport/718 Spyder RS/718 Spyder RS Argent.webp",
-    "911 Carrera RS": "../assets/img/porsche/colours/Sport/911 Carrera RS/911 Carrera S Argent.jpg",
+    "911 Carrera RS": "../assets/img/porsche/colours/Sport/911 Carrera RS/911 Carrera RS Argent.jpg",
     "Panamera": "../assets/img/porsche/colours/Classic/Panamera/Panamera Blanc.jpg",
     "Cayenne E-Hybrid": "../assets/img/porsche/colours/SUV/Cayenne E-Hybrid/Cayenne E-Hybrid Blanc.jpg",
     "Cayenne Electric": "../assets/img/porsche/colours/Electrique/Cayenne Electric/Cayenne Electric Gris.jpg",
@@ -26,8 +26,8 @@ const PRODUCT_IMAGES = {
     "911 Turbo S": "../assets/img/porsche/colours/Super Sport/911 Turbo S/911 Turbo S Argent.jpg"
   },
   Maserati: {
-    "Granturismo Folgore": "../assets/img/maserati/Éléctrique/GRANTURISMO_FOLGORE/GRANTURISMO_FOLGORE_AVANT_NOIR.jpg",
-    "Grecale Folgore": "../assets/img/maserati/Éléctrique/GRECALE_FOLGORE/GRECALE_FOLGORE_AVANT_NOIR.jpg",
+    "Granturismo Folgore": "../assets/img/maserati/Electrique/GRANTURISMO_FOLGORE/GRANTURISMO_FOLGORE_AVANT_NOIR.jpg",
+    "Grecale Folgore": "../assets/img/maserati/Electrique/GRECALE_FOLGORE/GRECALE_FOLGORE_AVANT_NOIR.jpg",
     "Gran Turismo": "../assets/img/maserati/Sport/GRAN_TURISMO/GRAN_TURISMO_AVANT_NOIR.jpg",
     "Trofeo": "../assets/img/maserati/Sport/TROFEO/TROFEO_AVANT_NOIR.jpg",
     "Grancabrio": "../assets/img/maserati/Sport Cabrio/GRANCABRIO/GRANCABRIO_AVANT_OR.jpg",

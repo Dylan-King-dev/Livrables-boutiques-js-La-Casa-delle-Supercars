@@ -68,90 +68,100 @@ function normalizePorscheCategory(product) {
 // Removed normalizePorscheColor - use raw DB colors directly
 
 function getImagePath(product) {
-    const color = product.couleur_principale || 'Noir';
-    const modelFolder = product.nom.replace(new RegExp(`^${product.marque || ''}\\s+`, 'i'), '').trim();
-    const ext = (modelFolder.includes('GT4 RS') || modelFolder.includes('Spyder RS')) ? '.webp' : '.jpg';
-    
-    if (product.marque === 'Maserati') {
-        const modelName = product.nom.toUpperCase().replace(/ /g, '_');
-        const colorUpper = color.toUpperCase();
-        return `../assets/img/maserati/${product.categorie_nom}/${modelName}/${modelName}_AVANT_${colorUpper}.jpg`;
-    } else if (product.marque === 'Porsche') {
-        const category = normalizePorscheCategory(product);
-        return `../assets/img/porsche/colours/${category}/${modelFolder}/${modelFolder} ${color}${ext}`;
-    } else {
-        return '../assets/img/maserati/Maserati-index.png';
-    }
+  const color = product.couleur_principale || 'Noir';
+  const modelFolder = product.nom.replace(new RegExp(`^${product.marque || ''}\\s+`, 'i'), '').trim();
+  const ext = (modelFolder.includes('GT4 RS') || modelFolder.includes('Spyder RS')) ? '.webp' : '.jpg';
+  
+  if (product.marque === 'Maserati') {
+    const modelName = product.nom.toUpperCase().replace(/ /g, '_');
+    const colorUpper = color.toUpperCase();
+    return `../assets/img/maserati/${product.categorie_nom}/${modelName}/${modelName}_AVANT_${colorUpper}.jpg`;
+  } else if (product.marque === 'Porsche') {
+    const category = normalizePorscheCategory(product);
+    return `../assets/img/porsche/colours/${category}/${modelFolder}/${modelFolder} ${color}${ext}`;
+  } else {
+    return '../assets/img/maserati/Maserati-index.png';
+  }
 }
 
 function getSwatchPath(apiProduct, color) {
-    const modelFolder = apiProduct.nom.replace(new RegExp(`^${apiProduct.marque || ''}\\s+`, 'i'), '').trim();
-    const ext = (modelFolder.includes('GT4 RS') || modelFolder.includes('Spyder RS')) ? '.webp' : '.jpg';
-    
-    if (apiProduct.marque === 'Maserati') {
-        const modelName = apiProduct.nom.toUpperCase().replace(/ /g, '_');
-        const swatchColor = color.toUpperCase();
-        return `../assets/img/maserati/${apiProduct.categorie_nom}/${modelName}/icon/menu_icon_${swatchColor}.jpg`;
-    } else if (apiProduct.marque === 'Porsche') {
-        const category = normalizePorscheCategory(apiProduct);
-        return `../assets/img/porsche/colours/${category}/${modelFolder}/icon/${color}${ext}`;
-    } else {
-        return '../assets/img/maserati/Maserati-index.png';
-    }
+  const modelFolder = apiProduct.nom.replace(new RegExp(`^${apiProduct.marque || ''}\\s+`, 'i'), '').trim();
+
+  if (apiProduct.marque === 'Maserati') {
+    const modelName = apiProduct.nom.toUpperCase().replace(/ /g, '_');
+    const swatchColor = color.toUpperCase();
+    return `../assets/img/maserati/${apiProduct.categorie_nom}/${modelName}/icon/menu_icon_${swatchColor}.jpg`;
+  } else if (apiProduct.marque === 'Porsche') {
+    const category = normalizePorscheCategory(apiProduct);
+    return `../assets/img/porsche/colours/${category}/${modelFolder}/icon/${color}.jpg`; // always .jpg
+  } else {
+    return '../assets/img/maserati/Maserati-index.png';
+  }
 }
 
 function adaptProductFromAPI(apiProduct) {
-    const colors = [];
-    const primaryColor = apiProduct.couleur_principale || 'Noir';
-    const secondaryColor = apiProduct.couleur_secondaire;
+  const colors = [];
+  const primaryColor = apiProduct.couleur_principale || 'Noir';
+  const secondaryColor = apiProduct.couleur_secondaire;
 
-    // Primary color
-    const primaryImagePath = getImagePath({ ...apiProduct, couleur_principale: primaryColor });
-    colors.push({
-        key: primaryColor.toLowerCase(),
-        label: primaryColor,
-        swatch: getSwatchPath(apiProduct, primaryColor),
-        images: [
-            primaryImagePath,
-            primaryImagePath.replace('_AVANT_', '_COTER_'),
-            primaryImagePath.replace('_AVANT_', '_ARRIERE_')
-        ],
-    });
-
-    // Secondary color if exists
-    if (secondaryColor) {
-        const secondaryImagePath = getImagePath({ ...apiProduct, couleur_principale: secondaryColor });
-        colors.push({
-            key: secondaryColor.toLowerCase(),
-            label: secondaryColor,
-            swatch: getSwatchPath(apiProduct, secondaryColor),
-            images: [
-                secondaryImagePath,
-                secondaryImagePath.replace('_AVANT_', '_COTER_'),
-                secondaryImagePath.replace('_AVANT_', '_ARRIERE_')
-            ],
-        });
+  const buildImages = (color) => {
+    const imagePath = getImagePath({ ...apiProduct, couleur_principale: color });
+    
+    if (apiProduct.marque === 'Porsche') {
+      const ext = imagePath.includes('.webp') ? '.webp' : '.jpg';
+      const base = imagePath.replace(ext, ''); // strip extension
+      return [
+        imagePath,               // 911 Carrera RS Argent.jpg
+        `${base}(1)${ext}`,      // 911 Carrera RS Argent(1).jpg
+        `${base}(2)${ext}`,      // 911 Carrera RS Argent(2).jpg
+      ];
+    } else {
+      // Maserati keeps the _AVANT_ / _COTER_ / _ARRIERE_ pattern
+      return [
+        imagePath,
+        imagePath.replace('_AVANT_', '_COTER_'),
+        imagePath.replace('_AVANT_', '_ARRIERE_'),
+      ];
     }
+  };
 
-    return {
-        id: apiProduct.id,
-        name: apiProduct.nom,
-        short: apiProduct.nom.replace(apiProduct.marque + ' ', ''),
-        brand: apiProduct.marque,
-        ref: apiProduct.ref,
-        badge: apiProduct.categorie_nom,
-        price: apiProduct.prix + ' €',
-        availability: apiProduct.stock > 0 ? 'Disponible' : 'Sur demande',
-        specs: {
-            power: apiProduct.puissance + ' ch',
-            zeroTo100: apiProduct.zero_a_cent + ' s',
-            drive: 'N/A',
-            edition: apiProduct.ref || 'Signature',
-        },
-        description: apiProduct.description,
-        image: primaryImagePath,
-        colors: colors,
-    };
+  const primaryImages = buildImages(primaryColor);
+  colors.push({
+    key: primaryColor.toLowerCase(),
+    label: primaryColor,
+    swatch: getSwatchPath(apiProduct, primaryColor),
+    images: primaryImages,
+  });
+
+  if (secondaryColor) {
+    const secondaryImages = buildImages(secondaryColor);
+    colors.push({
+      key: secondaryColor.toLowerCase(),
+      label: secondaryColor,
+      swatch: getSwatchPath(apiProduct, secondaryColor),
+      images: secondaryImages,
+    });
+  }
+
+  return {
+    id: apiProduct.id,
+    name: apiProduct.nom,
+    short: apiProduct.nom.replace(apiProduct.marque + ' ', ''),
+    brand: apiProduct.marque,
+    ref: apiProduct.ref,
+    badge: apiProduct.categorie_nom,
+    price: apiProduct.prix + ' €',
+    availability: apiProduct.stock > 0 ? `${apiProduct.stock} en stock` : 'Sur demande',
+    specs: {
+      power: apiProduct.puissance + ' ch',
+      zeroTo100: apiProduct.zero_a_cent + ' s',
+      drive: apiProduct.annee,
+      edition: apiProduct.ref
+    },
+    description: apiProduct.description,
+    image: primaryImages[0],   // ← make sure this is primaryImages[0] not primaryImagePath
+    colors: colors,
+  };
 }
 
 let product;
@@ -187,399 +197,401 @@ const getProduct = (id) => {
 console.log('Is numeric:', /^\d+$/.test(productId));
 
 if (/^\d+$/.test(productId)) {
-    console.log('Fetching from API for id:', productId);
-    fetch(`http://localhost:3000/api/produits/${productId}`)
-        .then(response => {
-            console.log('Response status:', response.status);
-            if (!response.ok) throw new Error('Product not found');
-            return response.json();
-        })
-        .then(apiProduct => {
-            console.log('API product:', apiProduct);
-            product = adaptProductFromAPI(apiProduct);
-            console.log('Adapted product:', product);
-            initializePage();
-        })
-        .catch(error => {
-            console.error('Error fetching product:', error);
-            product = getProduct("porsche-gt3rs");
-            initializePage();
-        });
+  console.log('Fetching from API for id:', productId);
+  fetch(`http://localhost:3000/api/produits/${productId}`)
+    .then(response => {
+      console.log('Response status:', response.status);
+      if (!response.ok) throw new Error('Product not found');
+      return response.json();
+    })
+    .then(apiProduct => {
+      console.log('API product:', apiProduct);
+      product = adaptProductFromAPI(apiProduct);
+      console.log('Adapted product:', product);
+      initializePage();
+    })
+    
+    .catch(error => {
+      console.error('Error fetching product:', error);
+      product = getProduct("porsche-gt3rs");
+      initializePage();
+    });
 } else {
-    console.log('Using static product:', productId);
-    product = getProduct(productId);
-    initializePage();
+  console.log('Using static product:', productId);
+  product = getProduct(productId);
+  initializePage();
 }
 
 function initializePage() {
 
-const track = document.getElementById("carouselTrack");
-const prevBtn = document.getElementById("prevSlide");
-const nextBtn = document.getElementById("nextSlide");
-const pauseBtn = document.getElementById("pauseSlides");
-const indicators = Array.from(document.querySelectorAll("#carouselIndicators button"));
-const colorOptions = document.getElementById("colorOptions");
-const colorLabel = document.getElementById("colorLabel");
-const productBadge = document.getElementById("productBadge");
-const productTitle = document.getElementById("productTitle");
-const productRef = document.getElementById("productRef");
-const productDesc = document.getElementById("productDesc");
-const productPrice = document.getElementById("productPrice");
-const productAvailability = document.getElementById("productAvailability");
-const specPower = document.getElementById("specPower");
-const specZero = document.getElementById("specZero");
-const specDrive = document.getElementById("specDrive");
-const specEdition = document.getElementById("specEdition");
-const addToCartBtn = document.getElementById("addToCart");
-const bookTestBtn = document.getElementById("bookTest");
-const toggleFavBtn = document.getElementById("toggleFav");
-const statusMessage = document.getElementById("statusMessage");
-const imageViewer = document.getElementById("imageViewer");
-const viewerImg = document.getElementById("viewerImg");
-const viewerClose = document.getElementById("viewerClose");
-const viewerCaption = document.getElementById("viewerCaption");
-const viewerPrev = document.getElementById("viewerPrev");
-const viewerNext = document.getElementById("viewerNext");
-const viewerIndicators = document.getElementById("viewerIndicators");
-const topbar = document.querySelector(".topbar");
+  const track = document.getElementById("carouselTrack");
+  const prevBtn = document.getElementById("prevSlide");
+  const nextBtn = document.getElementById("nextSlide");
+  const pauseBtn = document.getElementById("pauseSlides");
+  const indicators = Array.from(document.querySelectorAll("#carouselIndicators button"));
+  const colorOptions = document.getElementById("colorOptions");
+  const colorLabel = document.getElementById("colorLabel");
+  const productBadge = document.getElementById("productBadge");
+  const productTitle = document.getElementById("productTitle");
+  const productRef = document.getElementById("productRef");
+  const productDesc = document.getElementById("productDesc");
+  const productPrice = document.getElementById("productPrice");
+  const productAvailability = document.getElementById("productAvailability");
+  const specPower = document.getElementById("specPower");
+  const specZero = document.getElementById("specZero");
+  const specDrive = document.getElementById("specDrive");
+  const specEdition = document.getElementById("specEdition");
+  const addToCartBtn = document.getElementById("addToCart");
+  const bookTestBtn = document.getElementById("bookTest");
+  const toggleFavBtn = document.getElementById("toggleFav");
+  const statusMessage = document.getElementById("statusMessage");
+  const imageViewer = document.getElementById("imageViewer");
+  const viewerImg = document.getElementById("viewerImg");
+  const viewerClose = document.getElementById("viewerClose");
+  const viewerCaption = document.getElementById("viewerCaption");
+  const viewerPrev = document.getElementById("viewerPrev");
+  const viewerNext = document.getElementById("viewerNext");
+  const viewerIndicators = document.getElementById("viewerIndicators");
+  const topbar = document.querySelector(".topbar");
 
-console.log('Viewer elements found:', {
-  imageViewer: !!imageViewer,
-  viewerImg: !!viewerImg,
-  viewerCaption: !!viewerCaption,
-  viewerIndicators: !!viewerIndicators,
-  viewerClose: !!viewerClose,
-  viewerPrev: !!viewerPrev,
-  viewerNext: !!viewerNext
-});
-let touchStartX = 0;
-let touchDeltaX = 0;
-let viewerIndex = 0;
-let viewerImages = [];
-let isPaused = false;
-let continuousMode = true;
+  console.log('Viewer elements found:', {
+    imageViewer: !!imageViewer,
+    viewerImg: !!viewerImg,
+    viewerCaption: !!viewerCaption,
+    viewerIndicators: !!viewerIndicators,
+    viewerClose: !!viewerClose,
+    viewerPrev: !!viewerPrev,
+    viewerNext: !!viewerNext
+  });
+  let touchStartX = 0;
+  let touchDeltaX = 0;
+  let viewerIndex = 0;
+  let viewerImages = [];
+  let isPaused = false;
+  let continuousMode = true;
 
-// Met a jour l'aperçu plein écran.
-const updateViewer = (nextIndex) => {
-  if (!viewerImg || !viewerImages.length) return;
-  viewerIndex = (nextIndex + viewerImages.length) % viewerImages.length;
-  const src = viewerImages[viewerIndex];
-  viewerImg.src = src;
-  viewerImg.alt = viewerCaption ? viewerCaption.textContent : viewerImg.alt;
-  if (viewerCaption) viewerCaption.textContent = viewerImg.alt;
-  if (viewerIndicators) {
-    Array.from(viewerIndicators.querySelectorAll("button")).forEach((dot, i) => {
-      dot.classList.toggle("active", i === viewerIndex);
+  // Met a jour l'aperçu plein écran.
+  const updateViewer = (nextIndex) => {
+    if (!viewerImg || !viewerImages.length) return;
+    viewerIndex = (nextIndex + viewerImages.length) % viewerImages.length;
+    const src = viewerImages[viewerIndex];
+    viewerImg.src = src;
+    viewerImg.alt = viewerCaption ? viewerCaption.textContent : viewerImg.alt;
+    if (viewerCaption) viewerCaption.textContent = viewerImg.alt;
+    if (viewerIndicators) {
+      Array.from(viewerIndicators.querySelectorAll("button")).forEach((dot, i) => {
+        dot.classList.toggle("active", i === viewerIndex);
+      });
+    }
+  };
+
+  // Ouvre l'aperçu plein écran de l'image sélectionnée.
+  const openViewer = (images, startIndex) => {
+    console.log('Opening viewer with images:', images, 'startIndex:', startIndex);
+    if (!imageViewer || !viewerImg) {
+      console.error('Viewer elements not found!');
+      return;
+    }
+    viewerImages = images.slice();
+    viewerIndex = startIndex || 0;
+    const alt = viewerImg.alt || "";
+    if (viewerIndicators) {
+      viewerIndicators.innerHTML = "";
+      viewerImages.forEach((_, i) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.setAttribute("aria-label", `Aller à l'image ${i + 1}`);
+        if (i === viewerIndex) btn.classList.add("active");
+        btn.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          updateViewer(i);
+        });
+        viewerIndicators.appendChild(btn);
+      });
+    }
+    updateViewer(viewerIndex);
+    if (viewerCaption && alt) viewerCaption.textContent = alt;
+    imageViewer.classList.add("open");
+    imageViewer.setAttribute("aria-hidden", "false");
+    document.body.classList.add("viewer-open");
+    console.log('Viewer opened successfully');
+  };
+
+  // Ferme l'aperçu plein écran.
+  const closeViewer = () => {
+    console.log('Closing viewer');
+    if (!imageViewer || !viewerImg) {
+      console.error('Viewer elements not found!');
+      return;
+    }
+    imageViewer.classList.remove("open");
+    imageViewer.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("viewer-open");
+    viewerImg.src = "";
+    if (viewerCaption) viewerCaption.textContent = "";
+    viewerImages = [];
+    console.log('Viewer closed successfully');
+  };
+
+  // Met a jour la position du carrousel et l'indicateur actif.
+  const updateCarousel = (nextIndex) => {
+    if (continuousMode) return;
+    index = (nextIndex + indicators.length) % indicators.length;
+    track.style.transform = `translateX(-${index * 100}%)`;
+    indicators.forEach((dot, i) => dot.classList.toggle("active", i === index));
+  };
+
+
+  // Remplace les images du carrousel for la couleur selectionnee.
+  const setSlides = (images, label) => {
+    const resolved = images.map((src) => src || product.image);
+    const band = resolved.concat(resolved);
+    track.innerHTML = "";
+    band.forEach((src, i) => {
+      const slide = document.createElement("div");
+      slide.className = "carousel-slide";
+      const img = document.createElement("img");
+      img.src = src;
+      img.alt = `${product.name} - ${label} - vue ${((i % resolved.length) + 1)}`;
+      img.loading = i === 0 ? "eager" : "lazy";
+      img.tabIndex = 0;
+      img.setAttribute("role", "button");
+      img.setAttribute("aria-label", `Agrandir ${img.alt}`);
+      img.onclick = () => openViewer(resolved, i % resolved.length);
+      img.onkeydown = (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openViewer(resolved, i % resolved.length);
+        }
+      };
+      slide.appendChild(img);
+      track.appendChild(slide);
     });
-  }
-};
+    track.style.setProperty("--slides", band.length);
+    track.classList.add("is-continuous");
+    track.classList.remove("is-paused");
+    if (pauseBtn) {
+      pauseBtn.textContent = "Ⅱ";
+      pauseBtn.setAttribute("aria-pressed", "false");
+    }
+    if (prevBtn) prevBtn.disabled = true;
+    if (nextBtn) nextBtn.disabled = true;
+    const indicatorsWrap = document.getElementById("carouselIndicators");
+    if (indicatorsWrap) indicatorsWrap.classList.add("is-hidden");
+  };
 
-// Ouvre l'aperçu plein écran de l'image sélectionnée.
-const openViewer = (images, startIndex) => {
-  console.log('Opening viewer with images:', images, 'startIndex:', startIndex);
-  if (!imageViewer || !viewerImg) {
-    console.error('Viewer elements not found!');
-    return;
-  }
-  viewerImages = images.slice();
-  viewerIndex = startIndex || 0;
-  const alt = viewerImg.alt || "";
-  if (viewerIndicators) {
-    viewerIndicators.innerHTML = "";
-    viewerImages.forEach((_, i) => {
+  // Affiche les options de couleur et branche les clics.
+  const renderColors = () => {
+    colorOptions.innerHTML = "";
+    const colors = product.colors || [{ key: "default", label: "Standard", images: [product.image] }];
+    // Cree un bouton for chaque couleur disponible.
+    colors.forEach((color, idx) => {
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.setAttribute("aria-label", `Aller à l'image ${i + 1}`);
-      if (i === viewerIndex) btn.classList.add("active");
-      btn.addEventListener("click", (e) => {
+      btn.dataset.color = color.key;
+      btn.setAttribute("aria-pressed", idx === 0 ? "true" : "false");
+      if (idx === 0) btn.classList.add("active");
+
+      if (color.swatch) {
+        const swatch = document.createElement("span");
+        swatch.className = "color-swatch";
+        const img = document.createElement("img");
+        img.src = color.swatch;
+        img.alt = color.label;
+        swatch.appendChild(img);
+        btn.appendChild(swatch);
+      }
+
+      btn.appendChild(document.createTextNode(color.label));
+      // Change les images du carrousel quand une couleur is choisie.
+      btn.addEventListener("click", () => {
+        Array.from(colorOptions.querySelectorAll("button")).forEach((b) => {
+          b.classList.remove("active");
+          b.setAttribute("aria-pressed", "false");
+        });
+        btn.classList.add("active");
+        btn.setAttribute("aria-pressed", "true");
+        colorLabel.textContent = color.label;
+        setSlides(color.images || [product.image], color.label);
+      });
+
+      colorOptions.appendChild(btn);
+    });
+
+    const firstColor = colors[0];
+    colorLabel.textContent = firstColor.label;
+    setSlides(firstColor.images || [product.image], firstColor.label);
+  };
+
+  // Rafraichit l'icone des favoris selon le localStorage.
+  const refreshFavState = () => {
+    const favs = getList(STORAGE_KEYS.favs);
+    const isFav = favs.includes(product.id);
+    toggleFavBtn.style.color = isFav ? "#2a2f36" : "inherit";
+    toggleFavBtn.classList.toggle("is-active", isFav);
+    toggleFavBtn.setAttribute("aria-pressed", isFav ? "true" : "false");
+    toggleFavBtn.setAttribute("aria-label", isFav ? "Retirer des favoris" : "Ajouter aux favoris");
+  };
+
+  if (productBadge) productBadge.textContent = product.badge || product.short || product.brand || "Signature";
+  productTitle.textContent = product.name;
+  productRef.textContent = `Réf. ${product.ref || product.id}`;
+  if (productDesc) {
+    productDesc.textContent = product.description || `${product.brand} — série limitée, préparée sur mesure.`;
+  }
+  if (productPrice) {
+    productPrice.textContent = product.price || "Sur devis";
+  }
+  if (productAvailability) {
+    productAvailability.textContent = product.availability || "Disponible";
+    productAvailability.classList.remove("is-limited", "is-demand");
+    if (productAvailability.textContent.toLowerCase().includes("limité") || productAvailability.textContent.toLowerCase().includes("série")) {
+      productAvailability.classList.add("is-limited");
+    }
+    if (productAvailability.textContent.toLowerCase().includes("demande") || productAvailability.textContent.toLowerCase().includes("précommande")) {
+      productAvailability.classList.add("is-demand");
+    }
+  }
+  if (specPower) specPower.textContent = (product.specs && product.specs.power) || "—";
+  if (specZero) specZero.textContent = (product.specs && product.specs.zeroTo100) || "—";
+  if (specDrive) specDrive.textContent = (product.specs && product.specs.drive) || "—";
+  if (specEdition) specEdition.textContent = (product.specs && product.specs.edition) || "—";
+
+
+  renderColors();
+  refreshFavState();
+
+  // Va a l'image precedente.
+  if (prevBtn) prevBtn.addEventListener("click", () => updateCarousel(index - 1));
+  // Va a l'image suivante.
+  if (nextBtn) nextBtn.addEventListener("click", () => updateCarousel(index + 1));
+  if (pauseBtn) {
+    pauseBtn.addEventListener("click", () => {
+      isPaused = !isPaused;
+      pauseBtn.setAttribute("aria-pressed", isPaused ? "true" : "false");
+      pauseBtn.setAttribute("aria-label", isPaused ? "Reprendre" : "Mettre en pause");
+      pauseBtn.textContent = isPaused ? "▶" : "Ⅱ";
+      if (track) {
+        track.classList.toggle("is-paused", isPaused);
+      }
+    });
+  }
+  // Ajoute le clic sur chaque indicateur.
+  indicators.forEach((dot) => {
+    // Saute vers l'image correspondante a l'indicateur.
+    dot.addEventListener("click", () => updateCarousel(Number(dot.dataset.index)));
+  });
+
+  // Ajoute le produit au panier et affiche une confirmation courte.
+  addToCartBtn.addEventListener("click", () => {
+    addItem(STORAGE_KEYS.cart, product.id);
+    addToCartBtn.textContent = "Ajouté";
+    addToCartBtn.classList.add("is-added");
+    if (statusMessage) statusMessage.textContent = `${product.name} ajouté au panier.`;
+    // Retablit le libelle du bouton apres un court delai.
+    setTimeout(() => {
+      addToCartBtn.textContent = "Ajouter au panier";
+      addToCartBtn.classList.remove("is-added");
+    }, 1200);
+  });
+
+  if (bookTestBtn) {
+    bookTestBtn.addEventListener("click", () => {
+      if (statusMessage) {
+        statusMessage.textContent = "Un conseiller vous recontactera pour organiser l'essai.";
+      }
+    });
+  }
+
+  // Bascule le produit dans les favoris.
+  toggleFavBtn.addEventListener("click", () => {
+    toggleItem(STORAGE_KEYS.favs, product.id);
+    refreshFavState();
+  });
+
+  // Navigation clavier et gestes tactiles pour le carrousel.
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft") updateCarousel(index - 1);
+    if (e.key === "ArrowRight") updateCarousel(index + 1);
+    if (e.key === "Escape") closeViewer();
+  });
+
+  // Attache les écouteurs d'événements pour le viewer plein écran
+  const attachViewerListeners = () => {
+    console.log('Attaching viewer listeners...');
+
+    if (viewerClose) {
+      viewerClose.addEventListener("click", (e) => {
+        console.log('Close button clicked');
         e.preventDefault();
         e.stopPropagation();
-        updateViewer(i);
-      });
-      viewerIndicators.appendChild(btn);
-    });
-  }
-  updateViewer(viewerIndex);
-  if (viewerCaption && alt) viewerCaption.textContent = alt;
-  imageViewer.classList.add("open");
-  imageViewer.setAttribute("aria-hidden", "false");
-  document.body.classList.add("viewer-open");
-  console.log('Viewer opened successfully');
-};
-
-// Ferme l'aperçu plein écran.
-const closeViewer = () => {
-  console.log('Closing viewer');
-  if (!imageViewer || !viewerImg) {
-    console.error('Viewer elements not found!');
-    return;
-  }
-  imageViewer.classList.remove("open");
-  imageViewer.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("viewer-open");
-  viewerImg.src = "";
-  if (viewerCaption) viewerCaption.textContent = "";
-  viewerImages = [];
-  console.log('Viewer closed successfully');
-};
-
-// Met a jour la position du carrousel et l'indicateur actif.
-const updateCarousel = (nextIndex) => {
-  if (continuousMode) return;
-  index = (nextIndex + indicators.length) % indicators.length;
-  track.style.transform = `translateX(-${index * 100}%)`;
-  indicators.forEach((dot, i) => dot.classList.toggle("active", i === index));
-};
-
-
-// Remplace les images du carrousel for la couleur selectionnee.
-const setSlides = (images, label) => {
-  const resolved = images.map((src) => src || product.image);
-  const band = resolved.concat(resolved);
-  track.innerHTML = "";
-  band.forEach((src, i) => {
-    const slide = document.createElement("div");
-    slide.className = "carousel-slide";
-    const img = document.createElement("img");
-    img.src = src;
-    img.alt = `${product.name} - ${label} - vue ${((i % resolved.length) + 1)}`;
-    img.loading = i === 0 ? "eager" : "lazy";
-    img.tabIndex = 0;
-    img.setAttribute("role", "button");
-    img.setAttribute("aria-label", `Agrandir ${img.alt}`);
-    img.onclick = () => openViewer(resolved, i % resolved.length);
-    img.onkeydown = (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        openViewer(resolved, i % resolved.length);
-      }
-    };
-    slide.appendChild(img);
-    track.appendChild(slide);
-  });
-  track.style.setProperty("--slides", band.length);
-  track.classList.add("is-continuous");
-  track.classList.remove("is-paused");
-  if (pauseBtn) {
-    pauseBtn.textContent = "Ⅱ";
-    pauseBtn.setAttribute("aria-pressed", "false");
-  }
-  if (prevBtn) prevBtn.disabled = true;
-  if (nextBtn) nextBtn.disabled = true;
-  const indicatorsWrap = document.getElementById("carouselIndicators");
-  if (indicatorsWrap) indicatorsWrap.classList.add("is-hidden");
-};
-
-// Affiche les options de couleur et branche les clics.
-const renderColors = () => {
-  colorOptions.innerHTML = "";
-  const colors = product.colors || [{ key: "default", label: "Standard", images: [product.image] }];
-  // Cree un bouton for chaque couleur disponible.
-  colors.forEach((color, idx) => {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.dataset.color = color.key;
-    btn.setAttribute("aria-pressed", idx === 0 ? "true" : "false");
-    if (idx === 0) btn.classList.add("active");
-
-    if (color.swatch) {
-      const swatch = document.createElement("span");
-      swatch.className = "color-swatch";
-      const img = document.createElement("img");
-      img.src = color.swatch;
-      img.alt = color.label;
-      swatch.appendChild(img);
-      btn.appendChild(swatch);
-    }
-
-    btn.appendChild(document.createTextNode(color.label));
-    // Change les images du carrousel quand une couleur est choisie.
-    btn.addEventListener("click", () => {
-      Array.from(colorOptions.querySelectorAll("button")).forEach((b) => {
-        b.classList.remove("active");
-        b.setAttribute("aria-pressed", "false");
-      });
-      btn.classList.add("active");
-      btn.setAttribute("aria-pressed", "true");
-      colorLabel.textContent = color.label;
-      setSlides(color.images || [product.image], color.label);
-    });
-
-    colorOptions.appendChild(btn);
-  });
-
-  const firstColor = colors[0];
-  colorLabel.textContent = firstColor.label;
-  setSlides(firstColor.images || [product.image], firstColor.label);
-};
-
-// Rafraichit l'icone des favoris selon le localStorage.
-const refreshFavState = () => {
-  const favs = getList(STORAGE_KEYS.favs);
-  const isFav = favs.includes(product.id);
-  toggleFavBtn.style.color = isFav ? "#2a2f36" : "inherit";
-  toggleFavBtn.classList.toggle("is-active", isFav);
-  toggleFavBtn.setAttribute("aria-pressed", isFav ? "true" : "false");
-  toggleFavBtn.setAttribute("aria-label", isFav ? "Retirer des favoris" : "Ajouter aux favoris");
-};
-
-if (productBadge) productBadge.textContent = product.badge || product.short || product.brand || "Signature";
-productTitle.textContent = product.name;
-productRef.textContent = `Réf. ${product.ref || product.id}`;
-if (productDesc) {
-  productDesc.textContent = product.description || `${product.brand} — série limitée, préparée sur mesure.`;
-}
-if (productPrice) {
-  productPrice.textContent = product.price || "Sur devis";
-}
-if (productAvailability) {
-  productAvailability.textContent = product.availability || "Disponible";
-  productAvailability.classList.remove("is-limited", "is-demand");
-  if (productAvailability.textContent.toLowerCase().includes("limité") || productAvailability.textContent.toLowerCase().includes("série")) {
-    productAvailability.classList.add("is-limited");
-  }
-  if (productAvailability.textContent.toLowerCase().includes("demande") || productAvailability.textContent.toLowerCase().includes("précommande")) {
-    productAvailability.classList.add("is-demand");
-  }
-}
-if (specPower) specPower.textContent = (product.specs && product.specs.power) || "—";
-if (specZero) specZero.textContent = (product.specs && product.specs.zeroTo100) || "—";
-if (specDrive) specDrive.textContent = (product.specs && product.specs.drive) || "—";
-if (specEdition) specEdition.textContent = (product.specs && product.specs.edition) || "Signature";
-
-renderColors();
-refreshFavState();
-
-// Va a l'image precedente.
-if (prevBtn) prevBtn.addEventListener("click", () => updateCarousel(index - 1));
-// Va a l'image suivante.
-if (nextBtn) nextBtn.addEventListener("click", () => updateCarousel(index + 1));
-if (pauseBtn) {
-  pauseBtn.addEventListener("click", () => {
-    isPaused = !isPaused;
-    pauseBtn.setAttribute("aria-pressed", isPaused ? "true" : "false");
-    pauseBtn.setAttribute("aria-label", isPaused ? "Reprendre" : "Mettre en pause");
-    pauseBtn.textContent = isPaused ? "▶" : "Ⅱ";
-    if (track) {
-      track.classList.toggle("is-paused", isPaused);
-    }
-  });
-}
-// Ajoute le clic sur chaque indicateur.
-indicators.forEach((dot) => {
-  // Saute vers l'image correspondante a l'indicateur.
-  dot.addEventListener("click", () => updateCarousel(Number(dot.dataset.index)));
-});
-
-// Ajoute le produit au panier et affiche une confirmation courte.
-addToCartBtn.addEventListener("click", () => {
-  addItem(STORAGE_KEYS.cart, product.id);
-  addToCartBtn.textContent = "Ajouté";
-  addToCartBtn.classList.add("is-added");
-  if (statusMessage) statusMessage.textContent = `${product.name} ajouté au panier.`;
-  // Retablit le libelle du bouton apres un court delai.
-  setTimeout(() => {
-    addToCartBtn.textContent = "Ajouter au panier";
-    addToCartBtn.classList.remove("is-added");
-  }, 1200);
-});
-
-if (bookTestBtn) {
-  bookTestBtn.addEventListener("click", () => {
-    if (statusMessage) {
-      statusMessage.textContent = "Un conseiller vous recontactera pour organiser l'essai.";
-    }
-  });
-}
-
-// Bascule le produit dans les favoris.
-toggleFavBtn.addEventListener("click", () => {
-  toggleItem(STORAGE_KEYS.favs, product.id);
-  refreshFavState();
-});
-
-// Navigation clavier et gestes tactiles pour le carrousel.
-document.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowLeft") updateCarousel(index - 1);
-  if (e.key === "ArrowRight") updateCarousel(index + 1);
-  if (e.key === "Escape") closeViewer();
-});
-
-// Attache les écouteurs d'événements pour le viewer plein écran
-const attachViewerListeners = () => {
-  console.log('Attaching viewer listeners...');
-
-  if (viewerClose) {
-    viewerClose.addEventListener("click", (e) => {
-      console.log('Close button clicked');
-      e.preventDefault();
-      e.stopPropagation();
-      closeViewer();
-    });
-    console.log('Close button listener attached');
-  }
-
-  if (viewerPrev) {
-    viewerPrev.addEventListener("click", (e) => {
-      console.log('Prev button clicked');
-      e.preventDefault();
-      e.stopPropagation();
-      updateViewer(viewerIndex - 1);
-    });
-    console.log('Prev button listener attached');
-  }
-
-  if (viewerNext) {
-    viewerNext.addEventListener("click", (e) => {
-      console.log('Next button clicked');
-      e.preventDefault();
-      e.stopPropagation();
-      updateViewer(viewerIndex + 1);
-    });
-    console.log('Next button listener attached');
-  }
-
-  if (imageViewer) {
-    imageViewer.addEventListener("click", (e) => {
-      console.log('Viewer background clicked, target:', e.target.id || e.target.class);
-      // Only close if clicking on the viewer background or image itself, not on buttons
-      if (e.target === imageViewer || e.target === viewerImg) {
         closeViewer();
+      });
+      console.log('Close button listener attached');
+    }
+
+    if (viewerPrev) {
+      viewerPrev.addEventListener("click", (e) => {
+        console.log('Prev button clicked');
+        e.preventDefault();
+        e.stopPropagation();
+        updateViewer(viewerIndex - 1);
+      });
+      console.log('Prev button listener attached');
+    }
+
+    if (viewerNext) {
+      viewerNext.addEventListener("click", (e) => {
+        console.log('Next button clicked');
+        e.preventDefault();
+        e.stopPropagation();
+        updateViewer(viewerIndex + 1);
+      });
+      console.log('Next button listener attached');
+    }
+
+    if (imageViewer) {
+      imageViewer.addEventListener("click", (e) => {
+        console.log('Viewer background clicked, target:', e.target.id || e.target.class);
+        // Only close if clicking on the viewer background or image itself, not on buttons
+        if (e.target === imageViewer || e.target === viewerImg) {
+          closeViewer();
+        }
+      });
+      console.log('Viewer background listener attached');
+    }
+  };
+
+  track.addEventListener("touchstart", (e) => {
+    touchStartX = e.touches[0].clientX;
+    touchDeltaX = 0;
+  });
+
+  track.addEventListener("touchmove", (e) => {
+    touchDeltaX = e.touches[0].clientX - touchStartX;
+  });
+
+  track.addEventListener("touchend", (e) => {
+    if (Math.abs(touchDeltaX) > 40) {
+      updateCarousel(touchDeltaX > 0 ? index - 1 : index + 1);
+    }
+    touchStartX = 0;
+    touchDeltaX = 0;
+  });
+
+  if (topbar) {
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 0) {
+        topbar.classList.add("is-hidden");
+      } else {
+        topbar.classList.remove("is-hidden");
       }
     });
-    console.log('Viewer background listener attached');
   }
-};
 
-track.addEventListener("touchstart", (e) => {
-  touchStartX = e.touches[0].clientX;
-  touchDeltaX = 0;
-});
-
-track.addEventListener("touchmove", (e) => {
-  touchDeltaX = e.touches[0].clientX - touchStartX;
-});
-
-track.addEventListener("touchend", (e) => {
-  if (Math.abs(touchDeltaX) > 40) {
-    updateCarousel(touchDeltaX > 0 ? index - 1 : index + 1);
-  }
-  touchStartX = 0;
-  touchDeltaX = 0;
-});
-
-if (topbar) {
-  window.addEventListener("scroll", () => {
-    if (window.scrollY > 0) {
-      topbar.classList.add("is-hidden");
-    } else {
-      topbar.classList.remove("is-hidden");
-    }
-  });
-}
-
-// Attach viewer listeners NOW that everything is initialized
-console.log('About to attach viewer listeners from initializePage');
-attachViewerListeners();
+  // Attach viewer listeners NOW that everything is initialized
+  console.log('About to attach viewer listeners from initializePage');
+  attachViewerListeners();
 }
 
